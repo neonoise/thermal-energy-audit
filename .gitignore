@@ -1,0 +1,9 @@
+# Артефакты автоматизации браузера и скриншоты
+.playwright-mcp/
+*.png
+!images/*.png
+
+# Служебные файлы ОС
+Thumbs.db
+desktop.ini
+.DS_Store

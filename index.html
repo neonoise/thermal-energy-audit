@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Аудит энергоэффективности термического участка — Максим Костенко</title>
+<meta name="description" content="Мероприятия по энергосбережению с подтверждённым эффектом — из архива ваших же печей. Перерасход в кубометрах, киловатт-часах и рублях. Первая печь — бесплатно.">
+<style>
+  :root{
+    --accent:#C4410F;
+    --accent-ink:#8F2F0A;
+    --accent-soft:rgba(196,65,15,.07);
+    --accent-line:rgba(196,65,15,.22);
+    --ink:#15171b;
+    --ink-2:#3d424a;
+    --muted:#6b7079;
+    --bg:#ffffff;
+    --surface:#f8f7f5;
+    --line:#e6e4e0;
+    --radius:14px;
+    --wrap:1080px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0;line-height:1.16;letter-spacing:-.02em;font-weight:650}
+  p{margin:0}
+  a{color:inherit}
+  ul{margin:0;padding:0;list-style:none}
+
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+  .sec{padding:88px 0;border-top:1px solid var(--line)}
+  .sec--plain{border-top:0}
+  .sec--surface{background:var(--surface);border-top:1px solid var(--line)}
+
+  .eyebrow{
+    font-size:12.5px;font-weight:650;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:20px;
+  }
+  .h2{font-size:clamp(26px,3.4vw,36px);margin-bottom:14px}
+  .sub{color:var(--muted);max-width:64ch;font-size:17px}
+  .sec-head{margin-bottom:44px}
+
+  /* ---------- header ---------- */
+  .top{
+    position:sticky;top:0;z-index:20;
+    background:rgba(255,255,255,.9);
+    backdrop-filter:saturate(180%) blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .top-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:15px;letter-spacing:-.01em}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none}
+  .brand span{color:var(--muted);font-weight:450}
+  .top .btn{padding:9px 16px;font-size:14px}
+  @media(max-width:620px){.brand span{display:none}}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    background:var(--accent);color:#fff;text-decoration:none;
+    font-weight:600;font-size:16px;line-height:1;
+    padding:15px 24px;border-radius:10px;
+    transition:background .16s ease,transform .16s ease;
+  }
+  .btn:hover{background:var(--accent-ink);transform:translateY(-1px)}
+  .btn--ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn--ghost:hover{background:var(--surface);border-color:#d5d2cc}
+  .btn-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+  /* ---------- hero ---------- */
+  .hero{padding:76px 0 84px;position:relative;overflow:hidden}
+  .hero::after{
+    content:"";position:absolute;right:-180px;top:-140px;width:520px;height:520px;
+    background:radial-gradient(circle,rgba(196,65,15,.10),transparent 66%);
+    pointer-events:none;
+  }
+  .hero-in{position:relative}
+  .hero h1{font-size:clamp(34px,5.6vw,58px);max-width:17ch;font-weight:680}
+  .hero .lead{margin-top:24px;font-size:clamp(18px,2.1vw,21px);color:var(--ink-2);max-width:56ch}
+  .hero .lead b{font-weight:650;color:var(--ink)}
+  .hero .btn-row{margin-top:34px}
+  .hero .fine{margin-top:14px;font-size:14px;color:var(--muted)}
+
+  .callout{
+    margin-top:40px;padding:20px 22px;
+    background:var(--accent-soft);border-left:3px solid var(--accent);
+    border-radius:0 10px 10px 0;max-width:62ch;
+    font-size:16px;color:var(--ink-2);
+  }
+  .callout b{color:var(--ink);font-weight:650}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
+  .chip{
+    font-size:13.5px;font-weight:550;color:var(--ink-2);
+    border:1px solid var(--line);background:#fff;
+    padding:8px 14px;border-radius:99px;
+  }
+  .chip::before{content:"—  ";color:var(--accent)}
+
+  /* ---------- cards ---------- */
+  .grid{display:grid;gap:18px}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 26px 28px;
+  }
+  .sec--surface .card{background:#fff}
+  .card h3{font-size:19px;margin-bottom:9px}
+  .card p{color:var(--muted);font-size:16px}
+
+  /* ---------- steps ---------- */
+  .steps{counter-reset:s;display:grid;gap:0}
+  .step{
+    display:grid;grid-template-columns:74px 1fr;gap:22px;
+    padding:26px 0;border-top:1px solid var(--line);
+  }
+  .step:first-child{border-top:0;padding-top:0}
+  .step-n{
+    font-variant-numeric:tabular-nums;font-size:14px;font-weight:650;
+    letter-spacing:.08em;color:var(--accent);padding-top:4px;
+  }
+  .step h3{font-size:19px;margin-bottom:8px}
+  .step p{color:var(--muted);font-size:16px;max-width:62ch}
+
+  /* ---------- diff ---------- */
+  .diff{display:grid;gap:0}
+  .diff li{
+    display:grid;grid-template-columns:1fr;gap:6px;
+    padding:24px 0;border-top:1px solid var(--line);
+  }
+  .diff li:first-child{border-top:0;padding-top:0}
+  .diff .t{font-size:20px;font-weight:640;letter-spacing:-.015em}
+  .diff .d{color:var(--muted);font-size:16px;max-width:70ch}
+  .diff .t::before{
+    content:"";display:inline-block;width:7px;height:7px;border-radius:2px;
+    background:var(--accent);margin-right:12px;vertical-align:middle;
+    position:relative;top:-2px;
+  }
+
+  /* ---------- ladder ---------- */
+  .ladder{position:relative;margin-top:8px}
+  .ladder li{position:relative;padding:0 0 26px 34px}
+  .ladder li::before{
+    content:"";position:absolute;left:5px;top:7px;width:9px;height:9px;border-radius:50%;
+    background:#fff;border:2px solid var(--line);
+  }
+  .ladder li::after{
+    content:"";position:absolute;left:9.5px;top:20px;bottom:-2px;width:1px;background:var(--line);
+  }
+  .ladder li:last-child{padding-bottom:0}
+  .ladder li:last-child::after{display:none}
+  .ladder li:first-child::before{background:var(--accent);border-color:var(--accent)}
+  .ladder .t{font-weight:640;font-size:17px}
+  .ladder li:first-child .t{color:var(--accent-ink)}
+  .ladder .d{color:var(--muted);font-size:15.5px}
+
+  /* ---------- final cta ---------- */
+  .cta{
+    background:var(--ink);color:#fff;border-radius:18px;
+    padding:clamp(32px,5vw,52px);
+  }
+  .cta h2{font-size:clamp(25px,3.2vw,34px);max-width:20ch}
+  .cta p{color:#b6bac1;margin-top:16px;max-width:56ch;font-size:17px}
+  .cta .btn{background:var(--accent);margin-top:30px}
+  .cta .btn:hover{background:#dd5518}
+  .contacts{
+    display:flex;flex-wrap:wrap;gap:14px 40px;margin-top:34px;
+    padding-top:28px;border-top:1px solid rgba(255,255,255,.14);
+  }
+  .contacts a{text-decoration:none;display:block}
+  .contacts .k{display:block;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#868c95;margin-bottom:4px}
+  .contacts .v{font-size:18px;font-weight:600}
+  .contacts a:hover .v{color:#ff7a45}
+
+  /* ---------- footer ---------- */
+  .foot{padding:40px 0 56px;color:var(--muted);font-size:15px}
+  .foot p{max-width:74ch}
+  .foot .who{color:var(--ink-2);font-weight:600;margin-bottom:8px}
+
+  @media(max-width:760px){
+    body{font-size:16px}
+    .sec{padding:60px 0}
+    .hero{padding:56px 0 62px}
+    .grid-2{grid-template-columns:1fr}
+    .step{grid-template-columns:1fr;gap:6px;padding:22px 0}
+    .step-n{padding-top:0}
+    .sec-head{margin-bottom:32px}
+    .btn{width:100%;justify-content:center}
+    .top .btn{width:auto}
+    .contacts{gap:18px}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="brand"><i class="dot"></i>Максим Костенко&nbsp;<span>· промышленные термические технологии</span></div>
+    <a class="btn" href="#write">Написать</a>
+  </div>
+</header>
+
+<!-- 1. ПЕРВЫЙ ЭКРАН -->
+<section class="hero">
+  <div class="wrap hero-in">
+    <div class="eyebrow">Аудит энергоэффективности термического участка</div>
+    <h1>План по энергосбережению — не из воздуха</h1>
+    <p class="lead">
+      Мероприятия с подтверждённым эффектом собираются из архива ваших же печей.
+      Перерасход считаем <b>в кубометрах, киловатт-часах и рублях по вашим тарифам</b> —
+      не по среднеотраслевым нормам из справочника.
+    </p>
+
+    <div class="btn-row">
+      <a class="btn" href="#write">Разберу одну печь бесплатно</a>
+      <a class="btn btn--ghost" href="#how">Как это работает</a>
+    </div>
+    <p class="fine">Два дня. Без остановки производства и без комиссии в цеху.</p>
+
+    <div class="callout">
+      Требования постановления Совета Министров <b>№ 819</b> нужно обеспечить, а показатель
+      по снижению энергоёмкости — закрыть. И то и другое упирается в одно: под мероприятия
+      нужны цифры. <b>Цифры уже лежат у вас на регистраторах.</b>
+    </div>
+
+    <div class="chips">
+      <span class="chip">Первая печь — бесплатно</span>
+      <span class="chip">Работаем с вашей выгрузкой</span>
+      <span class="chip">Печь глушить не нужно</span>
+    </div>
+  </div>
+</section>
+
+<!-- 2. ПРОБЛЕМА -->
+<section class="sec sec--surface">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Проблема</div>
+      <h2 class="h2">Почему предложить нечего</h2>
+      <p class="sub">
+        Модернизация требует обоснования. Обоснование требует цифр. Цифр нет —
+        хотя данные, из которых они считаются, на заводе уже есть.
+      </p>
+    </div>
+
+    <div class="grid grid-2">
+      <article class="card">
+        <h3>Учёт стоит на цех, а не на печь</h3>
+        <p>Видно общую сумму за месяц. Не видно, какая печь и какой режим съедают лишнее.
+           Спорить с цифрой невозможно, потому что цифры нет.</p>
+      </article>
+      <article class="card">
+        <h3>Паспортный режим — только на бумаге</h3>
+        <p>По факту: перетопы, холостой ход между садками, долгие открытые двери,
+           выдержка «с запасом». Платят за это каждый день, не считает никто.</p>
+      </article>
+      <article class="card">
+        <h3>Архив пишется и никем не читается</h3>
+        <p>Температурные кривые месяцами ложатся на регистраторы и в АСУ мёртвым грузом.
+           Там уже записано, где именно теряются деньги.</p>
+      </article>
+      <article class="card">
+        <h3>Расползшийся режим — это ещё и брак</h3>
+        <p>Перерасход виден в счёте за газ, несоответствие режима — в переделке партии.
+           Причина у них общая, и находится она в тех же данных.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 3. РЕШЕНИЕ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Решение</div>
+      <h2 class="h2">Читаем то, что уже записано</h2>
+      <p class="sub">
+        Накладываем фактические режимы работы печей на паспортные, отделяем реальные
+        отклонения процесса от шума термопары и переводим разницу в деньги — по вашим
+        тарифам, в годовом масштабе.
+      </p>
+    </div>
+
+    <div class="grid grid-2">
+      <article class="card">
+        <h3>Где именно ушли деньги</h3>
+        <p>Печь, режим, операция. Не «по участку в среднем», а с точностью до садки
+           и участка кривой.</p>
+      </article>
+      <article class="card">
+        <h3>Сколько это в год</h3>
+        <p>Кубометры, киловатт-часы и рубли по вашим счетам, а не по средним по рынку.</p>
+      </article>
+      <article class="card">
+        <h3>Перечень мероприятий</h3>
+        <p>По каждому — оценка эффекта, ориентировочные затраты и срок окупаемости.
+           В том виде, в каком это можно нести директору и вносить в план.</p>
+      </article>
+      <article class="card">
+        <h3>Что можно сделать без закупок</h3>
+        <p>Часть перерасхода снимается корректировкой режима и организацией работы,
+           без единого рубля капзатрат. Если это ваш случай — скажем прямо.</p>
+      </article>
+    </div>
+
+    <div class="callout">
+      Аудит не привязан к покупке оборудования. Если выгоднее ничего не менять
+      в железе — так и будет написано в отчёте.
+    </div>
+  </div>
+</section>
+
+<!-- 4. КАК ЭТО РАБОТАЕТ -->
+<section class="sec sec--surface" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Как это работает</div>
+      <h2 class="h2">Четыре шага и пара дней</h2>
+      <p class="sub">От завода нужны файлы, а не люди, время цеха и остановка печей.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">ШАГ 01</div>
+        <div>
+          <h3>Вы отдаёте то, что уже есть</h3>
+          <p>Выгрузка температурных кривых с регистратора или АСУ за 1–3 месяца, техкарта
+             с паспортным режимом, счета за газ и электричество, сменные журналы с загрузкой:
+             сколько садок, какой вес, какая марка. Файлами, по почте.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">ШАГ 02</div>
+        <div>
+          <h3>Накладываем факт на паспорт</h3>
+          <p>Фактические режимы против паспортных, садка за садкой. Отклонение процесса
+             от дрейфа термопары отличаем — для этого и нужны три профильных образования
+             в металлургических процессах, а не универсальный опросный лист.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">ШАГ 03</div>
+        <div>
+          <h3>Переводим в деньги</h3>
+          <p>Перерасход по вашим тарифам и вашей фактической загрузке, приведённый к году.
+             Отдельно — эффект по каждому предлагаемому мероприятию.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">ШАГ 04</div>
+        <div>
+          <h3>Отдаём отчёт и обсуждаем</h3>
+          <p>Первый отчёт по одной печи — бесплатно. Дальше решаете вы: не убедило —
+             разошлись, никаких обязательств.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Архива на печи нет вообще?</b> Приедем и снимем временными регистраторами
+      за несколько недель. Это уже платный этап — но и он не требует останавливать печь.
+    </div>
+  </div>
+</section>
+
+<!-- 5. ЧЕМ ОТЛИЧАЕТСЯ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Чем отличается</div>
+      <h2 class="h2">Не то же самое, что энергоаудит «вообще»</h2>
+    </div>
+
+    <ul class="diff">
+      <li>
+        <div class="t">Аудит проводит производитель печей</div>
+        <div class="d">Не консультант с опросным листом, а те, кто эти печи проектирует,
+          изготавливает, монтирует и запускает: камерные, шахтные, проходные, термические
+          агрегаты и линии. Мы знаем, где у них тонко, до того как открыли ваш архив.</div>
+      </li>
+      <li>
+        <div class="t">Считаем по факту, а не по нормам</div>
+        <div class="d">Работаем с реальными архивами за месяцы работы и вашими счетами.
+          Среднеотраслевой норматив из справочника показывает, как должно быть у всех;
+          ваш архив показывает, как есть у вас.</div>
+      </li>
+      <li>
+        <div class="t">Доводим до результата</div>
+        <div class="d">Отчёт — не конец работы. Проект, поставка, монтаж, пуско-наладка —
+          EPC под ключ по тем мероприятиям, которые сами и нашли. Отвечаем за цифру,
+          которую написали, собственным исполнением.</div>
+      </li>
+      <li>
+        <div class="t">Быстро и без остановки производства</div>
+        <div class="d">Работаем с выгрузкой данных. Не нужно глушить печь, выводить участок
+          из графика и принимать комиссию в цеху на неделю. Цех живёт своей жизнью.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- 6. ЧТО ДАЛЬШЕ -->
+<section class="sec sec--surface">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Что дальше</div>
+      <h2 class="h2">Начинается с одной печи</h2>
+      <p class="sub">Первый шаг ни к чему не обязывает. Остальное — только если первый
+        покажет, что здесь есть о чём говорить.</p>
+    </div>
+
+    <ul class="ladder">
+      <li>
+        <div class="t">Бесплатный отчёт по одной печи</div>
+        <div class="d">Два дня. Ваша выгрузка, наш разбор, цифра перерасхода в деньгах.</div>
+      </li>
+      <li>
+        <div class="t">Аудит по всему термическому участку</div>
+        <div class="d">Все печи, сводная картина, готовый перечень мероприятий в план.</div>
+      </li>
+      <li>
+        <div class="t">Реализация мероприятий</div>
+        <div class="d">Проект, поставка, монтаж, пуско-наладка — EPC под ключ.</div>
+      </li>
+      <li>
+        <div class="t">Квартальный мониторинг</div>
+        <div class="d">Снимаем архив раз в квартал: удержали эффект или он расползся обратно.
+          Заодно — готовые данные для отчётности.</div>
+      </li>
+      <li>
+        <div class="t">Энергосервисный контракт</div>
+        <div class="d">Вкладываемся в мероприятия сами, завод платит из достигнутой экономии.</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="sec sec--plain" id="write" style="padding-top:72px">
+  <div class="wrap">
+    <div class="cta">
+      <h2>Если тема откликнулась — напишите</h2>
+      <p>
+        Достаточно одной строки: какой завод, какая печь, есть ли выгрузка с регистратора.
+        Отвечу сам и скажу честно, есть ли здесь что искать, — до всяких договоров.
+      </p>
+      <a class="btn" href="mailto:kostenko@ftf.by?subject=Аудит%20энергоэффективности%20термического%20участка">Написать на почту</a>
+
+      <div class="contacts">
+        <a href="mailto:kostenko@ftf.by">
+          <span class="k">Почта</span>
+          <span class="v">kostenko@ftf.by</span>
+        </a>
+        <a href="tel:+375293557538">
+          <span class="k">Телефон</span>
+          <span class="v">+375 29 355-75-38</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap foot">
+  <p class="who">Максим Костенко</p>
+  <p>
+    Инженер, три профильных образования в металлургических процессах. Путь от слесаря-ремонтника
+    до технического директора. Инжиниринговая компания полного цикла в области промышленных
+    термических технологий и энергосервисная компания: оборудование, проектирование,
+    строительство, монтаж, пуско-наладка.
+  </p>
+</footer>
+
+</body>
+</html>
