@@ -1,7 +1,7 @@
 # Артефакты автоматизации браузера и скриншоты
 .playwright-mcp/
 *.png
-!images/*.png
+!image/*.png
 
 # Служебные файлы ОС
 Thumbs.db
