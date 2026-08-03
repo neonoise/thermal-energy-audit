@@ -365,6 +365,204 @@
   }
   .callout b{color:var(--ink);font-weight:650}
 
+  /* ============ ДЕМО: ДВОЕ СУТОК ИЗ АРХИВА ============
+     Единственная живая часть страницы. Синтезированный архив температурных
+     кривых, детектор отклонений и перевод их в деньги — всё считается в
+     браузере, наружу ничего не уходит.
+
+     Префикс dm- обязателен: .k, .v, .t, .d, .card, .cta уже заняты
+     соседними секциями, и без префикса демо переопределило бы их. */
+
+  .dm-disclaim{
+    margin-bottom:clamp(24px,3vw,32px);
+    padding:16px 20px;max-width:72ch;
+    background:rgba(255,255,255,.045);
+    border:1px solid var(--dark-line);
+    border-left:2px solid var(--flame);
+    border-radius:0 12px 12px 0;
+    color:var(--dark-muted);font-size:14.5px;line-height:1.6;
+  }
+  .dm-disclaim b{color:var(--ember);font-weight:640}
+
+  /* ---- панель: печь, тариф, рабочие сутки ---- */
+  .dm-panel{
+    display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;
+    padding:16px 18px;margin-bottom:14px;
+    background:rgba(255,255,255,.035);
+    border:1px solid var(--dark-line);border-radius:var(--radius);
+  }
+  .dm-fld{display:flex;flex-direction:column;gap:6px}
+  .dm-fld label,.dm-lab{
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dark-muted);font-weight:660;
+  }
+  .dm-fld input{
+    width:118px;padding:9px 12px;border-radius:9px;
+    border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.55);
+    color:var(--dark-ink);font:inherit;font-size:15px;font-variant-numeric:tabular-nums;
+  }
+  .dm-fld input:focus{border-color:var(--flame-hi);outline:none}
+  .dm-hint{font-size:11.5px;color:#6f757d}
+  .dm-seg{display:inline-flex;padding:3px;border-radius:100px;background:rgba(0,0,0,.55);border:1px solid var(--dark-line)}
+  .dm-seg button{
+    appearance:none;border:0;background:transparent;color:var(--dark-muted);
+    font:inherit;font-size:14px;font-weight:620;padding:9px 17px;border-radius:100px;cursor:pointer;
+    transition:background .25s var(--ease),color .25s var(--ease);
+  }
+  .dm-seg button[aria-pressed="true"]{background:var(--flame);color:#fff}
+
+  /* ---- график ---- */
+  .dm-chartbox{
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--dark-line);border-radius:var(--radius-lg);
+    padding:14px 12px 10px;
+  }
+  .dm-chart-head{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;padding:2px 6px 12px}
+  .dm-chart-head .dm-name{font-weight:640;font-size:15.5px;color:#fff}
+  .dm-chart-head .dm-meta{color:#6f757d;font-size:13px}
+  .dm-legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-left:auto;color:#6f757d;font-size:12.5px}
+  .dm-legend span{display:inline-flex;align-items:center;gap:7px}
+  .dm-legend i{display:inline-block;width:18px;flex:none}
+  .dm-lg-fact{border-top:1.5px solid var(--dark-ink)}
+  .dm-lg-pass{border-top:1.5px dashed var(--ember)}
+  .dm-lg-charge{height:9px;border-radius:2px;background:rgba(255,255,255,.30)}
+  .dm-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+  .dm-scroll>svg{display:block;min-width:640px;width:100%}
+  .dm-scrollhint{display:none;padding:8px 6px 0;color:#6f757d;font-size:12px}
+
+  .dm-axis text{fill:#6f757d;font-size:11px;font-family:inherit}
+  .dm-grid line{stroke:rgba(255,255,255,.07);stroke-width:1}
+  .dm-passline{stroke:var(--ember);stroke-width:1.4;stroke-dasharray:5 5;opacity:.8}
+  .dm-fact{stroke:var(--dark-ink);stroke-width:1.5;fill:none;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+  /* Формы подсветки намеренно разные: одинаковыми заливками три статьи
+     сливаются в кашу и график перестаёт читаться. */
+  .dm-zone{opacity:0;transition:opacity .3s var(--ease)}
+  .dm-zone.dm-on{opacity:1}
+  .dm-zone rect,.dm-zone path{stroke-width:0}
+  .dm-z-idle rect{fill:rgba(228,88,26,.22)}          /* полоса во всю высоту */
+  .dm-z-over path{fill:rgba(255,177,105,.42)}        /* площадь над паспортом */
+  .dm-z-door rect{fill:rgba(var(--ice-rgb),.45)}     /* узкий штрих */
+  .dm-hit{fill:transparent;cursor:pointer}
+  .dm-charge rect{fill:rgba(255,255,255,.30)}
+  .dm-charge text{fill:#6f757d;font-size:10.5px}
+  .dm-sel{stroke:var(--flame-hi);stroke-width:1.5;fill:none}
+
+  /* ---- фильтры ---- */
+  .dm-chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+  .dm-chip{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:9px 15px 9px 12px;border-radius:100px;cursor:pointer;
+    border:1px solid var(--dark-line);background:transparent;color:var(--dark-muted);
+    font:inherit;font-size:13.5px;font-weight:620;
+    transition:background .25s var(--ease),color .25s var(--ease),border-color .25s var(--ease);
+  }
+  .dm-chip .dm-dot{width:10px;height:10px;border-radius:3px;flex:none;opacity:.32;transition:opacity .25s var(--ease)}
+  .dm-chip[aria-pressed="true"]{color:#fff;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.2)}
+  .dm-chip[aria-pressed="true"] .dm-dot{opacity:1}
+  .dm-chip .dm-n{color:#6f757d;font-weight:500;font-variant-numeric:tabular-nums}
+  .dm-d-idle{background:var(--flame)}
+  .dm-d-over{background:var(--ember)}
+  .dm-d-door{background:rgb(var(--ice-rgb))}
+
+  /* ---- карточка события ---- */
+  .dm-detail{
+    margin-top:14px;padding:18px 19px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.16);border-radius:var(--radius);
+  }
+  .dm-detail.dm-empty{
+    border-style:dashed;border-color:var(--dark-line);background:transparent;
+    color:#6f757d;text-align:center;padding:24px 19px;
+  }
+  .dm-dhead{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+  .dm-tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:4px 10px;border-radius:100px}
+  .dm-t-idle{background:rgba(228,88,26,.2);color:var(--flame-hi)}
+  .dm-t-over{background:rgba(255,177,105,.16);color:var(--ember)}
+  .dm-t-door{background:rgba(var(--ice-rgb),.16);color:rgb(var(--ice-hi-rgb))}
+  .dm-when{font-size:13.5px;color:#6f757d}
+  .dm-detail h3{font-size:var(--fs-h3);margin:10px 0 8px;color:#fff}
+  .dm-detail p{color:var(--dark-muted);font-size:15px;line-height:1.6;max-width:74ch}
+  .dm-zoom{margin-top:14px;padding:8px;background:rgba(0,0,0,.5);border:1px solid var(--dark-line);border-radius:10px}
+  .dm-zoom svg{display:block;width:100%}
+  .dm-zline{stroke:var(--dark-ink);stroke-width:1.6;fill:none}
+  .dm-zpass{stroke:var(--ember);stroke-width:1.2;stroke-dasharray:4 4;opacity:.75}
+  .dm-zb-idle{fill:rgba(228,88,26,.24)}
+  .dm-zb-over{fill:rgba(255,177,105,.2)}
+  .dm-zb-door{fill:rgba(var(--ice-rgb),.28)}
+  .dm-zaxis text{fill:#6f757d;font-size:9.5px}
+  .dm-calc{
+    margin-top:14px;padding:12px 14px;border-radius:10px;
+    background:rgba(0,0,0,.5);border:1px solid var(--dark-line);
+    color:var(--dark-muted);font-size:13.5px;line-height:1.75;font-variant-numeric:tabular-nums;
+  }
+  .dm-calc b{color:#fff;font-weight:620}
+
+  /* ---- итоги ---- */
+  .dm-totals{
+    margin-top:clamp(22px,2.6vw,30px);display:grid;gap:12px;
+    grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  }
+  .dm-tcard{
+    padding:18px 19px;border-radius:var(--radius);
+    background:rgba(255,255,255,.035);border:1px solid var(--dark-line);
+  }
+  .dm-tcard .dm-k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6f757d;font-weight:660}
+  .dm-tcard .dm-v{
+    font-size:clamp(25px,3vw,33px);font-weight:680;letter-spacing:-.035em;
+    margin-top:8px;color:#fff;font-variant-numeric:tabular-nums;line-height:1.1;
+  }
+  .dm-tcard .dm-u{font-size:13.5px;color:var(--dark-muted);margin-top:5px;font-variant-numeric:tabular-nums}
+  .dm-tcard--hero{
+    border-color:rgba(228,88,26,.45);
+    background:linear-gradient(180deg,rgba(228,88,26,.16),rgba(228,88,26,.03));
+  }
+  .dm-tcard--hero .dm-v{color:var(--ember)}
+
+  .dm-bars{margin-top:16px;display:grid;gap:11px}
+  .dm-bar{display:grid;grid-template-columns:1fr auto;gap:5px 14px;align-items:center}
+  .dm-bar .dm-lb{display:flex;align-items:center;gap:9px;font-size:14.5px;color:var(--dark-ink)}
+  .dm-bar .dm-sub{color:#6f757d;font-size:13px}
+  .dm-bar .dm-num{font-size:14px;color:var(--dark-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .dm-bar .dm-track{grid-column:1/-1;height:7px;border-radius:100px;background:rgba(255,255,255,.07);overflow:hidden}
+  .dm-bar .dm-fill{display:block;height:100%;border-radius:100px;transition:width .5s var(--ease)}
+
+  .dm-note{margin-top:16px;max-width:72ch;color:#6f757d;font-size:14px;line-height:1.62}
+
+  /* ---- что здесь ненастоящее ---- */
+  .dm-honest{
+    margin-top:clamp(28px,3.4vw,40px);
+    padding:clamp(22px,3vw,30px);
+    background:rgba(255,255,255,.035);
+    border:1px solid var(--dark-line);border-radius:var(--radius-lg);
+  }
+  .dm-honest h3{font-size:var(--fs-h3);color:#fff;margin-bottom:16px}
+  .dm-cols{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+  .dm-cols h4{
+    margin:0 0 11px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  }
+  .dm-no h4{color:#6f757d}
+  .dm-yes h4{color:var(--ember)}
+  .dm-cols li{
+    position:relative;padding-left:21px;margin-bottom:10px;
+    color:var(--dark-muted);font-size:14.5px;line-height:1.55;
+  }
+  .dm-cols li::before{position:absolute;left:0;top:0;font-weight:700}
+  .dm-no li::before{content:"–";color:#6f757d}
+  .dm-yes li::before{content:"+";color:var(--ember)}
+
+  .dm-after{
+    margin-top:clamp(26px,3.2vw,36px);
+    display:flex;flex-wrap:wrap;gap:18px 26px;align-items:center;
+  }
+  .dm-after p{color:var(--dark-muted);font-size:var(--fs-body);max-width:52ch}
+
+  @media(max-width:720px){
+    .dm-scrollhint{display:block}
+    .dm-panel{gap:14px 20px;padding:14px 15px}
+    .dm-fld input{width:100px}
+    .dm-legend{margin-left:0;width:100%}
+  }
+
   /* ============ ШАГИ ============ */
   .steps{display:grid;gap:0}
   .step{
@@ -988,7 +1186,133 @@
   </div>
 </section>
 
-<!-- ========== 4. КАК ЭТО РАБОТАЕТ ========== -->
+<!-- ========== 4. ДЕМО: ДВОЕ СУТОК ИЗ АРХИВА ==========
+     Секция тёмная не только ради ритма: график читается на тёмном, и
+     курсор-облако само переключается на ней в режим screen — оно ищет
+     тёмные зоны по селектору .hero,.strip,.sec--dark,.cta.            -->
+<section class="sec sec--dark" id="demo">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow rv">Посмотрите сами</div>
+      <h2 class="h2 rv">Двое суток из архива печи</h2>
+      <p class="sub rv" data-d="1">
+        Ровно то, что каждый день пишет регистратор и никто не открывает. Ниже — двое
+        суток работы камерной печи: температура минута за минутой, паспортный режим
+        и журнал садок. Нажмите на подсвеченный участок.
+      </p>
+    </div>
+
+    <p class="dm-disclaim rv">
+      <b>Данные демонстрационные.</b> Архив синтезирован по типовому режиму камерной
+      печи — это не архив вашего и не архив чужого завода, и никакой экономии он не
+      обещает. Настоящие здесь две вещи: алгоритм, который ищет отклонения, и формулы,
+      которыми они переводятся в деньги. Тариф и число рабочих суток подставьте свои.
+    </p>
+
+    <div class="dm-panel rv">
+      <div class="dm-fld">
+        <span class="dm-lab" id="dmLabF">Печь</span>
+        <div class="dm-seg" role="group" aria-labelledby="dmLabF">
+          <button type="button" id="dmGas" aria-pressed="true">Газовая</button>
+          <button type="button" id="dmEl" aria-pressed="false">Электрическая</button>
+        </div>
+      </div>
+      <div class="dm-fld">
+        <label for="dmTariff">Тариф</label>
+        <input type="number" id="dmTariff" step="0.01" min="0" inputmode="decimal">
+        <span class="dm-hint" id="dmTariffHint">BYN за м³</span>
+      </div>
+      <div class="dm-fld">
+        <label for="dmDays">Рабочих суток в году</label>
+        <input type="number" id="dmDays" step="1" min="1" max="365" value="250" inputmode="numeric">
+        <span class="dm-hint">для пересчёта на год</span>
+      </div>
+    </div>
+
+    <div class="dm-chartbox rv">
+      <div class="dm-chart-head">
+        <span class="dm-name" id="dmName"></span>
+        <span class="dm-meta" id="dmMeta"></span>
+        <span class="dm-legend">
+          <span><i class="dm-lg-fact"></i>факт</span>
+          <span><i class="dm-lg-pass"></i><span id="dmLegPass"></span></span>
+          <span><i class="dm-lg-charge"></i>садка в печи</span>
+        </span>
+      </div>
+      <div class="dm-scroll">
+        <svg id="dmChart" viewBox="0 0 1000 340" role="img" aria-labelledby="dmChartT">
+          <title id="dmChartT">Температура демонстрационной печи за двое суток с подсветкой отклонений</title>
+        </svg>
+      </div>
+      <p class="dm-scrollhint">График прокручивается вбок пальцем</p>
+    </div>
+
+    <div class="dm-chips" role="group" aria-label="Что подсвечивать на графике">
+      <button type="button" class="dm-chip" data-k="idle" aria-pressed="true"><span class="dm-dot dm-d-idle"></span>Холостой ход <span class="dm-n" id="dmNIdle"></span></button>
+      <button type="button" class="dm-chip" data-k="over" aria-pressed="true"><span class="dm-dot dm-d-over"></span>Перетоп <span class="dm-n" id="dmNOver"></span></button>
+      <button type="button" class="dm-chip" data-k="door" aria-pressed="true"><span class="dm-dot dm-d-door"></span>Открытая дверь <span class="dm-n" id="dmNDoor"></span></button>
+    </div>
+
+    <div class="dm-detail dm-empty" id="dmDetail">Нажмите на подсвеченный участок графика</div>
+
+    <div class="dm-totals">
+      <div class="dm-tcard">
+        <div class="dm-k">За эти двое суток</div>
+        <div class="dm-v" id="dmWin"></div>
+        <div class="dm-u" id="dmWinU"></div>
+      </div>
+      <div class="dm-tcard dm-tcard--hero">
+        <div class="dm-k">В пересчёте на год</div>
+        <div class="dm-v" id="dmYear"></div>
+        <div class="dm-u" id="dmYearU"></div>
+      </div>
+      <div class="dm-tcard">
+        <div class="dm-k">Печь горячая и пустая</div>
+        <div class="dm-v" id="dmIdle"></div>
+        <div class="dm-u" id="dmIdleU"></div>
+      </div>
+    </div>
+
+    <div class="dm-bars" id="dmBars"></div>
+    <p class="dm-note" id="dmNote"></p>
+
+    <div class="dm-honest rv">
+      <h3>Что здесь ненастоящее, а что настоящее</h3>
+      <div class="dm-cols">
+        <div class="dm-no">
+          <h4>Ненастоящее</h4>
+          <ul>
+            <li>Сам архив: синтезирован по типовому режиму, а не выгружен с завода.</li>
+            <li>Тариф по умолчанию — ориентировочный, ваш подставляется полем выше.</li>
+            <li>Теплотехнические коэффициенты. У вашей печи они из её теплового расчёта.</li>
+            <li>Здесь одна печь и двое суток. В отчёте — участок и месяцы архива.</li>
+          </ul>
+        </div>
+        <div class="dm-yes">
+          <h4>Настоящее</h4>
+          <ul>
+            <li>Алгоритм. Он не знает, где спрятаны отклонения: читает массив температур
+                и журнал садок, как читал бы вашу выгрузку.</li>
+            <li>Формулы перевода в кубометры, киловатт-часы и рубли — они расписаны
+                в каждой карточке.</li>
+            <li>Порог отсечки шума термопары: отклонение меньше трёх сигм отклонением
+                не считается. Поэтому помечены не все садки.</li>
+            <li>Вывод, который отсюда виден: главные деньги не в перетопе, а в часах,
+                когда горячая печь стоит пустой.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="dm-after rv">
+      <a class="btn" href="#write">Разберём вашу печь бесплатно <span class="arw" aria-hidden="true">→</span></a>
+      <p>Нужна выгрузка с регистратора или АСУ, техкарта, счета и сменные журналы.
+         Первая печь — бесплатно, за пару дней, без остановки производства.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 5. КАК ЭТО РАБОТАЕТ ========== -->
 <section class="sec" id="how">
   <div class="wrap">
     <div class="sec-head">
@@ -1041,7 +1365,7 @@
   </div>
 </section>
 
-<!-- ========== 5. ЧЕМ ОТЛИЧАЕТСЯ (синематик-секция) ========== -->
+<!-- ========== 6. ЧЕМ ОТЛИЧАЕТСЯ (синематик-секция) ========== -->
 <section class="sec sec--dark">
   <div class="wrap">
     <div class="sec-head">
@@ -1081,7 +1405,7 @@
   </div>
 </section>
 
-<!-- ========== 6. ЧТО ДАЛЬШЕ ========== -->
+<!-- ========== 7. ЧТО ДАЛЬШЕ ========== -->
 <section class="sec sec--surface">
   <div class="wrap">
     <div class="sec-head">
@@ -1378,6 +1702,623 @@
       document.hidden ? stop() : start();
     });
   }
+})();
+</script>
+
+<!-- ================= ДЕМО: РАЗБОР АРХИВА ПЕЧИ =================
+     Отдельным блоком намеренно: если тут что-то упадёт, шапка, видеофон
+     и курсор наверху продолжат работать.                              -->
+<script>
+"use strict";
+(function(){
+
+var chart = document.getElementById("dmChart");
+if (!chart) return;
+
+/* ===================================================================
+   1. ПАРАМЕТРЫ ДЕМОНСТРАЦИОННЫХ ПЕЧЕЙ
+   Коэффициенты типовые. У реальной печи они берутся из её теплового
+   расчёта — эти нужны только чтобы показать механику.
+   =================================================================== */
+
+var FURNACES = {
+  gas: {
+    name:"Камерная газовая печь, 300 кВт",
+    meta:"паспорт: 940 °C, выдержка 4 ч · садка до 2 т",
+    unit:"м³", unitLong:"м³ газа",
+    tariff:1.05, tariffHint:"BYN за м³",
+    passT:940,
+    holdRate:12.0,     /* расход на удержании пустой печи, ед/ч */
+    holdExp:1.35,      /* показатель роста потерь с температурой */
+    doorKw:125,        /* излучение через открытый проём 1,2 м², ε 0,85 */
+    kwhPerUnit:9.3,    /* кВт·ч тепла в единице топлива */
+    burnerEff:0.50,
+    chargeKg:2000, chargeC:0.65
+  },
+  el: {
+    name:"Камерная электропечь, 160 кВт",
+    meta:"паспорт: 900 °C, выдержка 3 ч · садка до 1,5 т",
+    unit:"кВт·ч", unitLong:"кВт·ч",
+    tariff:0.32, tariffHint:"BYN за кВт·ч",
+    passT:900,
+    holdRate:36.0,
+    holdExp:1.40,
+    doorKw:82,
+    kwhPerUnit:1.0,
+    burnerEff:0.92,
+    chargeKg:1500, chargeC:0.65
+  }
+};
+
+/* Планы работы — «что было в цеху». Генератор по ним рисует кривую,
+   детектор их не видит.
+   idle — печь стоит на уставке; door — дверь открыта (провал drop °C);
+   heat — выход на уставку to за постоянную времени tau; soak — выдержка.
+   У электропечи tau от садки к садке растёт: так выглядит деградация
+   нагревателей — печь выходит на режим всё дольше.                    */
+
+var PLANS = {
+  gas: [
+    {k:"idle",m:40},
+    {k:"door",m:6,drop:96,load:"in"},   {k:"heat",m:80,to:965,tau:26}, {k:"soak",m:240,to:965}, {k:"door",m:7,drop:44,load:"out"},
+    {k:"idle",m:218},
+    {k:"door",m:5,drop:92,load:"in"},   {k:"heat",m:78,to:963,tau:25}, {k:"soak",m:240,to:963}, {k:"door",m:6,drop:46,load:"out"},
+    {k:"idle",m:95},
+    {k:"door",m:5,drop:90,load:"in"},   {k:"heat",m:78,to:941,tau:26}, {k:"soak",m:240,to:941}, {k:"door",m:6,drop:43,load:"out"},
+    {k:"idle",m:40},
+    {k:"door",m:5,drop:94,load:"in"},   {k:"heat",m:82,to:968,tau:27}, {k:"soak",m:252,to:968}, {k:"door",m:8,drop:47,load:"out"},
+    {k:"idle",m:296},
+    {k:"door",m:5,drop:93,load:"in"},   {k:"heat",m:79,to:966,tau:26}, {k:"soak",m:240,to:966}, {k:"door",m:6,drop:45,load:"out"},
+    {k:"idle",m:120},
+    {k:"door",m:5,drop:91,load:"in"},   {k:"heat",m:80,to:964,tau:26}, {k:"soak",m:240,to:964}, {k:"door",m:6,drop:44,load:"out"},
+    {k:"idle",m:72}
+  ],
+  el: [
+    {k:"idle",m:60},
+    {k:"door",m:5,drop:78,load:"in"},   {k:"heat",m:95,to:918,tau:22},  {k:"soak",m:180,to:918}, {k:"door",m:6,drop:38,load:"out"},
+    {k:"idle",m:145},
+    {k:"door",m:5,drop:80,load:"in"},   {k:"heat",m:102,to:921,tau:25}, {k:"soak",m:180,to:921}, {k:"door",m:5,drop:36,load:"out"},
+    {k:"idle",m:330},
+    {k:"door",m:6,drop:82,load:"in"},   {k:"heat",m:110,to:899,tau:28}, {k:"soak",m:180,to:899}, {k:"door",m:5,drop:37,load:"out"},
+    {k:"idle",m:85},
+    {k:"door",m:5,drop:79,load:"in"},   {k:"heat",m:116,to:923,tau:31}, {k:"soak",m:186,to:923}, {k:"door",m:7,drop:39,load:"out"},
+    {k:"idle",m:240},
+    {k:"door",m:5,drop:81,load:"in"},   {k:"heat",m:124,to:920,tau:34}, {k:"soak",m:180,to:920}, {k:"door",m:6,drop:38,load:"out"},
+    {k:"idle",m:160},
+    {k:"door",m:5,drop:80,load:"in"},   {k:"heat",m:137,to:917,tau:38}, {k:"soak",m:174,to:917}, {k:"door",m:6,drop:37,load:"out"},
+    {k:"idle",m:30}
+  ]
+};
+
+var WIN = 2880;        /* двое суток по минуте */
+var NOISE_SD = 1.35;   /* шум термопары, °C */
+
+/* ===================================================================
+   2. ГЕНЕРАТОР АРХИВА
+   =================================================================== */
+
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+/* сумма двух равномерных — дешёвое приближение нормального шума */
+function noise(rnd){ return (rnd() + rnd() - 1) * NOISE_SD * 1.7; }
+
+function buildArchive(fk){
+  var plan = PLANS[fk], f = FURNACES[fk];
+  var rnd = mulberry32(fk === "gas" ? 20250403 : 71130921);
+  var T = new Float64Array(WIN), charges = [];
+  var cur = f.passT + 25, sp = f.passT + 25, i = 0, openAt = null;
+
+  for (var s = 0; s < plan.length && i < WIN; s++){
+    var seg = plan[s];
+    if (seg.k === "door" && seg.load === "in") openAt = i;
+    if (seg.k === "door" && seg.load === "out" && openAt !== null){
+      charges.push({from:openAt, to:Math.min(i + seg.m, WIN)});
+      openAt = null;
+    }
+    if (seg.to) sp = seg.to;
+
+    for (var m = 0; m < seg.m && i < WIN; m++, i++){
+      if (seg.k === "door") cur -= seg.drop / seg.m;
+      else cur = sp + (cur - sp) * Math.exp(-1 / (seg.tau || 17));
+      /* колебание регулятора — процесс, а не шум: период ~11 мин */
+      var reg = (cur > sp - 12) ? Math.sin(i / 11 * 2 * Math.PI) * 2.1 : 0;
+      T[i] = cur + reg + noise(rnd);
+    }
+  }
+  for (; i < WIN; i++){
+    cur = sp + (cur - sp) * Math.exp(-1 / 17);
+    T[i] = cur + Math.sin(i / 11 * 2 * Math.PI) * 2.1 + noise(rnd);
+  }
+  if (openAt !== null) charges.push({from:openAt, to:WIN});
+  return {T:T, charges:charges};
+}
+
+/* ===================================================================
+   3. ДЕТЕКТОР
+   Знает только массив температур, журнал садок и паспортный режим.
+   Плана из раздела 2 он не видит — как не увидит и на вашей выгрузке.
+   =================================================================== */
+
+function smooth(T, w){
+  var n = T.length, out = new Float64Array(n), h = (w - 1) / 2;
+  for (var i = 0; i < n; i++){
+    var a = Math.max(0, i - h), b = Math.min(n - 1, i + h), s = 0;
+    for (var j = a; j <= b; j++) s += T[j];
+    out[i] = s / (b - a + 1);
+  }
+  return out;
+}
+
+/* шум термопары: сигма первых разностей на выдержке, делённая на √2 */
+function noiseSigma(T, charges){
+  var d = [], i;
+  for (var c = 0; c < charges.length; c++){
+    var from = charges[c].from + 150, to = charges[c].to - 30;
+    for (i = from + 1; i < to && i < T.length; i++) d.push(T[i] - T[i-1]);
+  }
+  if (!d.length) return 0;
+  var mean = 0; for (i = 0; i < d.length; i++) mean += d[i]; mean /= d.length;
+  var v = 0; for (i = 0; i < d.length; i++) v += (d[i]-mean)*(d[i]-mean);
+  return Math.sqrt(v / d.length / 2);
+}
+
+/* Выдержка = самый длинный участок в полосе 4 °C от максимума садки.
+   По производной искать нельзя: минутный шум рвёт любой порог наклона. */
+function findSoak(S, from, to){
+  var i, mx = -1e9;
+  for (i = from; i < to; i++) if (S[i] > mx) mx = S[i];
+  var band = mx - 4, best = null, st = null;
+  for (i = from; i < to; i++){
+    if (S[i] >= band){ if (st === null) st = i; }
+    else if (st !== null){
+      if (!best || (i - st) > (best[1] - best[0])) best = [st, i];
+      st = null;
+    }
+  }
+  if (st !== null && (!best || (to - st) > (best[1] - best[0]))) best = [st, to];
+  if (best && best[1] - best[0] < 45) return null;
+  return best;
+}
+
+function detect(arc, f){
+  var T = arc.T, n = T.length, charges = arc.charges;
+  var s3 = smooth(T, 3), s5 = smooth(T, 5), s9 = smooth(T, 9);
+  var sigma = noiseSigma(T, charges);
+  var overThresh = Math.max(3 * sigma, 4);   /* меньше трёх сигм — не отклонение */
+  var ev = [], i, c;
+
+  /* --- открытая дверь: падение ≥ 4,5 °C/мин, длина — до дна провала --- */
+  var DROP = 4.5;
+  i = 1;
+  while (i < n){
+    if (s3[i] - s3[i-1] <= -DROP){
+      var st = i - 1;
+      while (i < n && s3[i] - s3[i-1] < -0.8) i++;
+      var end = i - 1;
+      /* Сглаживание сдвигает начало провала на минуту-полторы назад, и дверь
+         выходит «открытой» дольше, чем была. Уточняем по сырому ряду. */
+      while (st < end && T[st + 1] - T[st] > -DROP) st++;
+      var top = s3[st > 0 ? st - 1 : 0], bot = s3[end], mins = end - st;
+      if (mins >= 2 && top - bot >= 20){
+        ev.push({type:"door", from:st, to:end, mins:mins, drop:top - bot, top:top});
+      }
+    } else i++;
+  }
+
+  /* --- холостой ход: печь выше 600 °C вне садки дольше 20 мин --- */
+  function inCharge(k){
+    for (var q = 0; q < charges.length; q++) if (k >= charges[q].from && k < charges[q].to) return true;
+    return false;
+  }
+  var st2 = null;
+  for (i = 0; i <= n; i++){
+    var hot = i < n && s5[i] > 600 && !inCharge(i);
+    if (hot){ if (st2 === null) st2 = i; }
+    else if (st2 !== null){
+      if (i - st2 >= 20){
+        var sum = 0;
+        for (var q2 = st2; q2 < i; q2++) sum += T[q2];
+        ev.push({type:"idle", from:st2, to:i, mins:i - st2, avgT:sum / (i - st2)});
+      }
+      st2 = null;
+    }
+  }
+
+  /* --- перетоп + наблюдение по времени выхода на режим --- */
+  var heats = [];
+  for (c = 0; c < charges.length; c++){
+    var sk = findSoak(s9, charges[c].from, Math.min(charges[c].to, n));
+    if (!sk) continue;
+    heats.push(sk[0] - charges[c].from);
+    var ssum = 0;
+    for (i = sk[0]; i < sk[1]; i++) ssum += T[i];
+    var avg = ssum / (sk[1] - sk[0]), over = avg - f.passT;
+    if (over > overThresh){
+      ev.push({type:"over", from:sk[0], to:sk[1], mins:sk[1] - sk[0], avgT:avg, over:over});
+    }
+  }
+
+  ev.sort(function(a,b){ return a.from - b.from; });
+  return {events:ev, sigma:sigma, overThresh:overThresh, heats:heats};
+}
+
+/* ===================================================================
+   4. ДЕНЬГИ
+   =================================================================== */
+
+function holdRate(f, t){ return f.holdRate * Math.pow((t - 20) / (f.passT - 20), f.holdExp); }
+function doorKw(f, t){ return f.doorKw * Math.pow((t + 273) / (f.passT + 273), 4); }
+function doorRate(f, t){ return doorKw(f, t) / 60 / f.kwhPerUnit / f.burnerEff; }
+
+function cost(e, f){
+  var h = e.mins / 60;
+  if (e.type === "idle") return holdRate(f, e.avgT) * h;
+  if (e.type === "door") return doorRate(f, e.top) * e.mins;
+  /* перетоп: разница удержания + догрев садки на лишние градусы */
+  return (holdRate(f, e.avgT) - holdRate(f, f.passT)) * h
+       + f.chargeKg * f.chargeC * e.over / 3600 / f.kwhPerUnit / f.burnerEff;
+}
+
+/* ===================================================================
+   5. ОТРИСОВКА
+   =================================================================== */
+
+var W = 1000, H = 340, PL = 46, PR = 12, PT = 14, PB = 46, CH = 16;
+var plotW = W - PL - PR, plotH = H - PT - PB - CH - 8;
+
+var TYPE = {
+  idle:{cls:"dm-z-idle", tag:"dm-t-idle", name:"Холостой ход"},
+  over:{cls:"dm-z-over", tag:"dm-t-over", name:"Перетоп"},
+  door:{cls:"dm-z-door", tag:"dm-t-door", name:"Открытая дверь"}
+};
+
+var st8 = {fk:"gas", arc:null, det:null, on:{idle:true, over:true, door:true}, sel:null, yLo:0, yHi:0};
+
+var $ = function(id){ return document.getElementById(id); };
+var SVGNS = "http://www.w3.org/2000/svg";
+function el(tag, attrs){
+  var n = document.createElementNS(SVGNS, tag);
+  for (var k in attrs) if (attrs[k] !== undefined && attrs[k] !== null) n.setAttribute(k, attrs[k]);
+  return n;
+}
+function nf(x, d){
+  return x.toLocaleString("ru-RU", {minimumFractionDigits:d||0, maximumFractionDigits:d||0});
+}
+function hm(mins){
+  var h = Math.floor(mins / 60), m = Math.round(mins % 60);
+  return h ? (h + " ч " + (m < 10 ? "0" : "") + m + " мин") : (m + " мин");
+}
+function clock(i){
+  var d = Math.floor(i / 1440) + 1, h = Math.floor((i % 1440) / 60), m = i % 60;
+  return "сут. " + d + ", " + (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+}
+function x(i){ return PL + i / (WIN - 1) * plotW; }
+function y(t){ return PT + (st8.yHi - t) / (st8.yHi - st8.yLo) * plotH; }
+
+function render(){
+  var f = FURNACES[st8.fk], arc = st8.arc, det = st8.det, svg = chart;
+  while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
+
+  var lo = 1e9, hi = -1e9, i;
+  for (i = 0; i < WIN; i++){ if (arc.T[i] < lo) lo = arc.T[i]; if (arc.T[i] > hi) hi = arc.T[i]; }
+  st8.yLo = Math.floor((Math.min(lo, f.passT) - 14) / 10) * 10;
+  st8.yHi = Math.ceil((Math.max(hi, f.passT) + 10) / 10) * 10;
+
+  /* сетка и оси */
+  var g = el("g", {"class":"dm-grid"}), ax = el("g", {"class":"dm-axis"});
+  var step = 20, t0 = Math.ceil(st8.yLo / step) * step, lb;
+  for (var t = t0; t <= st8.yHi; t += step){
+    g.appendChild(el("line", {x1:PL, x2:W-PR, y1:y(t).toFixed(1), y2:y(t).toFixed(1)}));
+    lb = el("text", {x:PL-8, y:(y(t)+4).toFixed(1), "text-anchor":"end"});
+    lb.textContent = t;
+    ax.appendChild(lb);
+  }
+  svg.appendChild(g);
+  for (var hh = 0; hh <= 48; hh += 4){
+    lb = el("text", {x:x(Math.min(hh*60, WIN-1)).toFixed(1), y:H-PB+CH+26,
+      "text-anchor":hh === 0 ? "start" : (hh === 48 ? "end" : "middle")});
+    lb.textContent = hh + " ч";
+    ax.appendChild(lb);
+  }
+  lb = el("text", {x:PL-8, y:PT-2, "text-anchor":"end"});
+  lb.textContent = "°C";
+  ax.appendChild(lb);
+  svg.appendChild(ax);
+
+  /* Зоны. Формы разные намеренно: одинаковой заливкой три статьи
+     сливаются, и график перестаёт что-либо показывать. */
+  var byType = {idle:[], over:[], door:[]};
+  det.events.forEach(function(e){ byType[e.type].push(e); });
+  function zoneGroup(k){ return el("g", {"class":"dm-zone " + TYPE[k].cls + (st8.on[k] ? " dm-on" : "")}); }
+
+  var zi = zoneGroup("idle");
+  byType.idle.forEach(function(e){
+    var x0 = x(e.from), x1 = x(Math.min(e.to, WIN-1));
+    zi.appendChild(el("rect", {x:x0.toFixed(1), y:PT, width:Math.max(x1-x0,1.4).toFixed(1), height:plotH}));
+  });
+  svg.appendChild(zi);
+
+  var zo = zoneGroup("over"), yp = y(f.passT);
+  byType.over.forEach(function(e){
+    var b = Math.min(e.to, WIN-1), p = "M" + x(e.from).toFixed(1) + " " + yp.toFixed(1);
+    for (var q = e.from; q <= b; q++) p += "L" + x(q).toFixed(1) + " " + Math.min(y(arc.T[q]), yp).toFixed(1);
+    zo.appendChild(el("path", {d:p + "L" + x(b).toFixed(1) + " " + yp.toFixed(1) + "Z"}));
+  });
+  svg.appendChild(zo);
+
+  svg.appendChild(el("line", {"class":"dm-passline", x1:PL, x2:W-PR, y1:yp.toFixed(1), y2:yp.toFixed(1)}));
+
+  var zd = zoneGroup("door");
+  byType.door.forEach(function(e){
+    var x0 = x(e.from), x1 = x(Math.min(e.to, WIN-1));
+    zd.appendChild(el("rect", {x:x0.toFixed(1), y:PT, width:Math.max(x1-x0,1.6).toFixed(1), height:plotH}));
+  });
+  svg.appendChild(zd);
+
+  /* фактическая кривая — плотнее пикселя не рисуем */
+  var d = "", px = -9;
+  for (i = 0; i < WIN; i++){
+    var xi = x(i);
+    if (xi - px < 0.33 && i !== WIN-1) continue;
+    px = xi;
+    d += (d ? "L" : "M") + xi.toFixed(1) + " " + y(arc.T[i]).toFixed(1);
+  }
+  svg.appendChild(el("path", {"class":"dm-fact", d:d}));
+
+  /* полоса садок — без неё холостой ход неотличим от выдержки */
+  var cy = PT + plotH + 10, cg = el("g", {"class":"dm-charge"});
+  cg.appendChild(el("rect", {x:PL, y:cy, width:plotW, height:CH, fill:"rgba(255,255,255,.045)"}));
+  arc.charges.forEach(function(c, n){
+    var x0 = x(c.from), x1 = x(Math.min(c.to, WIN-1));
+    cg.appendChild(el("rect", {x:x0.toFixed(1), y:cy, width:(x1-x0).toFixed(1), height:CH}));
+    if (x1 - x0 > 26){
+      var l2 = el("text", {x:((x0+x1)/2).toFixed(1), y:cy+11.5, "text-anchor":"middle", fill:"#0a0b0d"});
+      l2.textContent = "садка " + (n+1);
+      cg.appendChild(l2);
+    }
+  });
+  lb = el("text", {x:PL-8, y:cy+11.5, "text-anchor":"end"});
+  lb.textContent = "садки";
+  cg.appendChild(lb);
+  svg.appendChild(cg);
+
+  if (st8.sel){
+    var e0 = st8.sel, sx0 = x(e0.from), sx1 = x(Math.min(e0.to, WIN-1));
+    svg.appendChild(el("rect", {"class":"dm-sel", x:(sx0-1).toFixed(1), y:PT-2,
+      width:Math.max(sx1-sx0+2, 4).toFixed(1), height:plotH+4, rx:3}));
+  }
+
+  /* Зоны нажатия шириной не меньше пальца. Узкие кладём последними,
+     иначе широкая соседняя зона накроет их край. */
+  var hg = el("g", null);
+  det.events.map(function(e, n){ return {e:e, n:n}; })
+    .sort(function(a, b){ return (b.e.to - b.e.from) - (a.e.to - a.e.from); })
+    .forEach(function(o){
+      var e = o.e;
+      if (!st8.on[e.type]) return;
+      var x0 = x(e.from), x1 = x(Math.min(e.to, WIN-1)), w = Math.max(x1 - x0, 9);
+      var r = el("rect", {"class":"dm-hit", x:(x0 - (w - (x1-x0))/2).toFixed(1), y:PT,
+        width:w.toFixed(1), height:plotH + CH + 10, tabindex:0, role:"button"});
+      r.setAttribute("aria-label", TYPE[e.type].name + ", " + clock(e.from) + ", " + hm(e.mins));
+      r.addEventListener("click", function(){ select(o.n); });
+      r.addEventListener("keydown", function(ev){
+        if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); select(o.n); }
+      });
+      hg.appendChild(r);
+    });
+  svg.appendChild(hg);
+}
+
+/* приближённый фрагмент в карточке события */
+function zoom(e){
+  var f = FURNACES[st8.fk], T = st8.arc.T;
+  var pad = Math.max(25, Math.round(e.mins * 0.28));
+  var a = Math.max(0, e.from - pad), b = Math.min(WIN, e.to + pad);
+  var ZW = 640, ZH = 130, zl = 34, zr = 8, zt = 10, zb = 20;
+  var pw = ZW - zl - zr, ph = ZH - zt - zb, lo = 1e9, hi = -1e9, i;
+  for (i = a; i < b; i++){ if (T[i] < lo) lo = T[i]; if (T[i] > hi) hi = T[i]; }
+  lo = Math.min(lo, f.passT) - 6; hi = Math.max(hi, f.passT) + 6;
+  var zx = function(i){ return zl + (i - a) / (b - a - 1) * pw; };
+  var zy = function(t){ return zt + (hi - t) / (hi - lo) * ph; };
+
+  var svg = el("svg", {viewBox:"0 0 " + ZW + " " + ZH, "aria-hidden":"true"});
+  svg.appendChild(el("rect", {"class":"dm-zb-" + e.type, x:zx(e.from).toFixed(1), y:zt,
+    width:Math.max(zx(Math.min(e.to, b-1)) - zx(e.from), 2).toFixed(1), height:ph}));
+  svg.appendChild(el("line", {"class":"dm-zpass", x1:zl, x2:ZW-zr, y1:zy(f.passT).toFixed(1), y2:zy(f.passT).toFixed(1)}));
+  var d = "";
+  for (i = a; i < b; i++) d += (d ? "L" : "M") + zx(i).toFixed(1) + " " + zy(T[i]).toFixed(1);
+  svg.appendChild(el("path", {"class":"dm-zline", d:d}));
+
+  var ax = el("g", {"class":"dm-zaxis"}), lb;
+  [hi - 3, lo + 3].forEach(function(t){
+    lb = el("text", {x:zl-6, y:(zy(t)+3).toFixed(1), "text-anchor":"end"});
+    lb.textContent = Math.round(t);
+    ax.appendChild(lb);
+  });
+  [[a,"start"], [b-1,"end"]].forEach(function(p){
+    lb = el("text", {x:zx(p[0]).toFixed(1), y:ZH-6, "text-anchor":p[1]});
+    lb.textContent = clock(p[0]).replace("сут. ", "с");
+    ax.appendChild(lb);
+  });
+  svg.appendChild(ax);
+  return svg;
+}
+
+/* ===================================================================
+   6. КАРТОЧКА СОБЫТИЯ
+   =================================================================== */
+
+function select(n){
+  st8.sel = st8.det.events[n];
+  render();
+  paintDetail();
+  var box = $("dmDetail");
+  if (box.getBoundingClientRect().bottom > window.innerHeight) box.scrollIntoView({block:"center"});
+}
+
+function paintDetail(){
+  var box = $("dmDetail"), e = st8.sel, f = FURNACES[st8.fk];
+  box.className = "dm-detail";
+  box.textContent = "";
+  if (!e){
+    box.className = "dm-detail dm-empty";
+    box.textContent = "Нажмите на подсвеченный участок графика";
+    return;
+  }
+
+  var u = cost(e, f), money = u * tariff();
+  var head = document.createElement("div");
+  head.className = "dm-dhead";
+  head.innerHTML = '<span class="dm-tag ' + TYPE[e.type].tag + '">' + TYPE[e.type].name + '</span>' +
+    '<span class="dm-when">' + clock(e.from) + " — " + clock(Math.min(e.to, WIN-1)) + " · " + hm(e.mins) + "</span>";
+  box.appendChild(head);
+
+  var h3 = document.createElement("h3"), p = document.createElement("p");
+  var calc = document.createElement("div");
+  calc.className = "dm-calc";
+
+  if (e.type === "idle"){
+    h3.textContent = "Печь " + hm(e.mins) + " держали горячей и пустой";
+    p.textContent = "В журнале садок на этом промежутке пусто, а температура всё время держится около "
+      + Math.round(e.avgT) + " °C. Уставку после выгрузки никто не снял — горелки продолжают "
+      + "компенсировать потери через кладку и с уходящими газами.";
+    calc.innerHTML =
+      "расход на удержании при " + Math.round(e.avgT) + " °C&nbsp;— <b>" + nf(holdRate(f, e.avgT),1) + " " + f.unit + "/ч</b><br>" +
+      "× " + hm(e.mins) + " = <b>" + nf(u,1) + " " + f.unitLong + "</b><br>" +
+      "× " + nf(tariff(),2) + " BYN = <b>" + nf(money,2) + " BYN</b>";
+  } else if (e.type === "over"){
+    h3.textContent = "Выдержка шла на " + nf(e.over,1) + " °C выше паспорта";
+    p.textContent = "Средняя температура выдержки " + nf(e.avgT,1) + " °C при паспортных " + f.passT + " °C. "
+      + "Порог отсечки — " + nf(st8.det.overThresh,1) + " °C, это три сигмы шума термопары, так что дрожание "
+      + "датчика сюда не попало. Денег тут заметно меньше, чем в холостом ходе, — но именно расползшийся "
+      + "режим даёт разброс твёрдости и переделку.";
+    calc.innerHTML =
+      "удержание: (" + nf(holdRate(f,e.avgT),2) + " − " + nf(holdRate(f,f.passT),2) + ") " + f.unit + "/ч × " + hm(e.mins) + "<br>" +
+      "догрев садки: " + nf(f.chargeKg,0) + " кг × " + nf(f.chargeC,2) + " кДж/(кг·К) × " + nf(e.over,1) + " К<br>" +
+      "итого <b>" + nf(u,1) + " " + f.unitLong + "</b> = <b>" + nf(money,2) + " BYN</b>";
+  } else {
+    h3.textContent = "Дверь была открыта около " + hm(e.mins);
+    p.textContent = "Провал на " + Math.round(e.drop) + " °C за " + hm(e.mins)
+      + ". Так падает температура только при открытом проёме: через него печь светит наружу, "
+      + "и это самые быстрые потери из трёх.";
+    calc.innerHTML =
+      "излучение через проём при " + Math.round(e.top) + " °C&nbsp;— <b>" + nf(doorKw(f, e.top),0) + " кВт</b><br>" +
+      "× " + hm(e.mins) + " = <b>" + nf(u,1) + " " + f.unitLong + "</b><br>" +
+      "× " + nf(tariff(),2) + " BYN = <b>" + nf(money,2) + " BYN</b>";
+  }
+
+  box.appendChild(h3);
+  box.appendChild(p);
+  var zw = document.createElement("div");
+  zw.className = "dm-zoom";
+  zw.appendChild(zoom(e));
+  box.appendChild(zw);
+  box.appendChild(calc);
+}
+
+/* ===================================================================
+   7. ИТОГИ
+   =================================================================== */
+
+function tariff(){
+  var v = parseFloat(String($("dmTariff").value).replace(",", "."));
+  return isFinite(v) && v > 0 ? v : FURNACES[st8.fk].tariff;
+}
+function days(){
+  var v = parseInt($("dmDays").value, 10);
+  return isFinite(v) && v > 0 ? Math.min(v, 365) : 250;
+}
+
+function paintTotals(){
+  var f = FURNACES[st8.fk], tr = tariff(), k = days() / 2;
+  var s = {idle:{u:0,n:0,min:0}, over:{u:0,n:0,min:0}, door:{u:0,n:0,min:0}};
+  st8.det.events.forEach(function(e){
+    s[e.type].u += cost(e, f); s[e.type].n++; s[e.type].min += e.mins;
+  });
+
+  var uOn = 0;
+  ["idle","over","door"].forEach(function(t){ if (st8.on[t]) uOn += s[t].u; });
+
+  $("dmWin").textContent  = nf(uOn, 0) + " " + f.unit;
+  $("dmWinU").textContent = nf(uOn * tr, 0) + " BYN за 48 часов";
+  $("dmYear").textContent  = nf(uOn * tr * k, 0) + " BYN";
+  $("dmYearU").textContent = nf(uOn * k, 0) + " " + f.unit + " · при " + days() + " рабочих сутках";
+  $("dmIdle").textContent  = hm(s.idle.min);
+  $("dmIdleU").textContent = "из 48 часов — это " + Math.round(s.idle.min / WIN * 100) + " % времени";
+
+  $("dmNIdle").textContent = s.idle.n;
+  $("dmNOver").textContent = s.over.n;
+  $("dmNDoor").textContent = s.door.n;
+
+  var mx = Math.max(s.idle.u, s.over.u, s.door.u, 1e-6), bars = $("dmBars");
+  bars.textContent = "";
+  [["idle","Холостой ход","#E4581A"], ["over","Перетоп","#FFB169"], ["door","Открытая дверь","#58AAF8"]]
+    .forEach(function(r){
+      var t = r[0], u = s[t].u, row = document.createElement("div");
+      row.className = "dm-bar";
+      row.innerHTML =
+        '<div class="dm-lb"><span class="dm-dot dm-d-' + t + '" style="width:10px;height:10px;border-radius:3px;display:inline-block"></span>' +
+        r[1] + ' <span class="dm-sub">· ' + s[t].n + " шт · " + hm(s[t].min) + "</span></div>" +
+        '<div class="dm-num">' + nf(u, 0) + " " + f.unit + " · " + nf(u * tr * k, 0) + " BYN/год</div>" +
+        '<div class="dm-track"><span class="dm-fill" style="width:' + (u / mx * 100).toFixed(1) + "%;background:" + r[2] + '"></span></div>';
+      bars.appendChild(row);
+    });
+
+  var hts = st8.det.heats, note = "";
+  if (hts.length >= 3 && hts[hts.length-1] - hts[0] > 12){
+    note = "Отдельным наблюдением, без цены: время выхода на режим по садкам выросло с "
+      + hts[0] + " до " + hts[hts.length-1] + " минут. Это не перерасход, это повод посмотреть "
+      + "нагреватели, уплотнения и футеровку, пока они не встали посреди садки. ";
+  }
+  $("dmNote").textContent = note + "Шум термопары на выдержке — ±" + nf(st8.det.sigma, 2)
+    + " °C. Порог, ниже которого отклонение не считается отклонением, — " + nf(st8.det.overThresh, 1)
+    + " °C, это три сигмы. Отсюда видно, почему по средним за смену эти деньги не находятся: "
+    + "средняя прячет и многочасовые паузы, и провалы на открытой двери.";
+}
+
+/* ===================================================================
+   8. ЗАПУСК
+   =================================================================== */
+
+function load(fk){
+  st8.fk = fk;
+  st8.arc = buildArchive(fk);
+  st8.det = detect(st8.arc, FURNACES[fk]);
+  st8.sel = null;
+  $("dmTariff").value = FURNACES[fk].tariff;
+  $("dmTariffHint").textContent = FURNACES[fk].tariffHint;
+  $("dmName").textContent = FURNACES[fk].name;
+  $("dmMeta").textContent = FURNACES[fk].meta;
+  $("dmLegPass").textContent = "паспорт " + FURNACES[fk].passT + " °C";
+  $("dmGas").setAttribute("aria-pressed", fk === "gas");
+  $("dmEl").setAttribute("aria-pressed", fk === "el");
+  redraw();
+}
+function redraw(){ render(); paintDetail(); paintTotals(); }
+
+$("dmGas").addEventListener("click", function(){ if (st8.fk !== "gas") load("gas"); });
+$("dmEl").addEventListener("click",  function(){ if (st8.fk !== "el")  load("el");  });
+$("dmTariff").addEventListener("input", function(){ paintTotals(); paintDetail(); });
+$("dmDays").addEventListener("input",   function(){ paintTotals(); });
+
+Array.prototype.forEach.call(document.querySelectorAll(".dm-chip"), function(ch){
+  ch.addEventListener("click", function(){
+    var k = ch.getAttribute("data-k");
+    st8.on[k] = !st8.on[k];
+    ch.setAttribute("aria-pressed", st8.on[k]);
+    if (st8.sel && st8.sel.type === k && !st8.on[k]) st8.sel = null;
+    redraw();
+  });
+});
+
+load("gas");
+
 })();
 </script>
 

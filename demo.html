@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0b0d">
+<title>Двое суток из архива печи — демонстрация метода</title>
+<meta name="description" content="Демонстрационный архив температурных кривых камерной печи: перетоп, холостой ход и открытые двери, посчитанные в кубометрах, киловатт-часах и рублях.">
+<style>
+  :root{
+    --flame:#E4581A;
+    --flame-hi:#FF7A2E;
+    --ember:#FFB169;
+    --ice:#58AAF8;
+    --ice-hi:#9ED6FF;
+
+    --dark:#0a0b0d;
+    --dark-2:#111317;
+    --dark-3:#171a1f;
+    --line:rgba(255,255,255,.10);
+    --line-2:rgba(255,255,255,.16);
+    --ink:#f4f2ef;
+    --muted:#9aa0a8;
+    --muted-2:#6f757d;
+
+    --radius:14px;
+    --radius-lg:20px;
+    --wrap:1080px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+
+    --fs-h1:clamp(28px,4.6vw,46px);
+    --fs-h2:clamp(21px,2.6vw,30px);
+    --fs-body:clamp(15px,1.1vw,16.5px);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--dark);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:var(--fs-body);line-height:1.62;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+  h1,h2,h3{margin:0;line-height:1.12;letter-spacing:-.022em;font-weight:660}
+  p{margin:0}
+  a{color:inherit}
+  ul{margin:0;padding:0;list-style:none}
+  svg{display:block;max-width:100%}
+  ::selection{background:var(--flame);color:#fff}
+  :focus-visible{outline:2px solid var(--flame-hi);outline-offset:3px;border-radius:6px}
+
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 clamp(16px,4vw,28px)}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;
+    font-size:11.5px;font-weight:680;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ember);
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:currentColor;opacity:.55;flex:none}
+  .muted{color:var(--muted)}
+  .sm{font-size:13.5px;line-height:1.55}
+
+  /* ---------- шапка ---------- */
+  .top{
+    position:sticky;top:0;z-index:40;
+    background:rgba(10,11,13,.82);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:58px}
+  .back{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:14px;color:var(--muted);text-decoration:none;
+    transition:color .2s var(--ease);
+  }
+  .back:hover{color:var(--ink)}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:10px 18px;border-radius:100px;border:0;
+    background:var(--flame);color:#fff;font:inherit;font-size:14.5px;font-weight:620;
+    text-decoration:none;cursor:pointer;white-space:nowrap;
+    transition:background .2s var(--ease),transform .2s var(--ease);
+  }
+  .btn:hover{background:var(--flame-hi)}
+  .btn:active{transform:translateY(1px)}
+  .btn--ghost{background:transparent;color:var(--ink);border:1px solid var(--line-2)}
+  .btn--ghost:hover{background:rgba(255,255,255,.06)}
+
+  /* ---------- вступление ---------- */
+  .intro{padding:clamp(38px,6vw,70px) 0 clamp(24px,3vw,34px)}
+  .intro h1{font-size:var(--fs-h1);margin:16px 0 16px;max-width:20ch;text-wrap:balance}
+  .intro .lead{color:var(--muted);max-width:60ch;font-size:clamp(16px,1.4vw,18.5px)}
+  .disclaim{
+    margin-top:22px;padding:12px 15px;border-radius:12px;
+    border:1px solid var(--line);background:var(--dark-2);
+    color:var(--muted);font-size:13.5px;line-height:1.55;max-width:66ch;
+  }
+  .disclaim b{color:var(--ember);font-weight:640}
+
+  /* ---------- панель управления ---------- */
+  .panel{
+    display:flex;flex-wrap:wrap;gap:14px 26px;align-items:flex-end;
+    padding:16px 18px;margin-bottom:14px;
+    border:1px solid var(--line);border-radius:var(--radius);background:var(--dark-2);
+  }
+  .seg{display:inline-flex;padding:3px;border-radius:100px;background:#000;border:1px solid var(--line)}
+  .seg button{
+    appearance:none;border:0;background:transparent;color:var(--muted);
+    font:inherit;font-size:14px;font-weight:600;padding:8px 16px;border-radius:100px;cursor:pointer;
+    transition:background .2s var(--ease),color .2s var(--ease);
+  }
+  .seg button[aria-pressed="true"]{background:var(--flame);color:#fff}
+  .fld{display:flex;flex-direction:column;gap:5px}
+  .fld label{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);font-weight:640}
+  .fld input{
+    width:112px;padding:8px 11px;border-radius:9px;
+    border:1px solid var(--line-2);background:#000;color:var(--ink);
+    font:inherit;font-size:15px;font-variant-numeric:tabular-nums;
+  }
+  .fld input:focus{border-color:var(--flame-hi);outline:none}
+  .fld .hint{font-size:11.5px;color:var(--muted-2)}
+
+  /* ---------- график ---------- */
+  .chartbox{
+    border:1px solid var(--line);border-radius:var(--radius-lg);
+    background:var(--dark-2);padding:14px 12px 10px;
+  }
+  .chart-head{
+    display:flex;flex-wrap:wrap;gap:6px 18px;align-items:baseline;
+    padding:2px 6px 12px;
+  }
+  .chart-head .name{font-weight:640;font-size:15.5px}
+  .chart-head .meta{color:var(--muted-2);font-size:13px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-left:auto;color:var(--muted-2);font-size:12.5px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .legend i{display:inline-block;width:18px;flex:none}
+  .legend .lg-fact{border-top:1.5px solid var(--ink)}
+  .legend .lg-pass{border-top:1.5px dashed var(--ember)}
+  .legend .lg-charge{height:9px;border-radius:2px;background:rgba(255,255,255,.30)}
+  .chart-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+  .chart-scroll>svg{min-width:640px;width:100%}
+  .scrollhint{
+    display:none;padding:6px 6px 0;color:var(--muted-2);font-size:12px;
+  }
+  .axis text{fill:#6f757d;font-size:11px;font-family:inherit}
+  .grid line{stroke:rgba(255,255,255,.07);stroke-width:1}
+  .passline{stroke:var(--ember);stroke-width:1.4;stroke-dasharray:5 5;opacity:.8}
+  .factline{stroke:var(--ink);stroke-width:1.5;fill:none;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+  .zone{opacity:0;transition:opacity .25s var(--ease)}
+  .zone.on{opacity:1}
+  .zone rect,.zone path{stroke-width:0}
+  .z-idle rect{fill:rgba(228,88,26,.22)}
+  .z-over path{fill:rgba(255,177,105,.42)}
+  .z-door rect{fill:rgba(88,170,248,.45)}
+  .hit{fill:transparent;cursor:pointer}
+  .charge rect{fill:rgba(255,255,255,.30)}
+  .charge .lbl{fill:#6f757d;font-size:10.5px}
+  .sel{stroke:var(--flame-hi);stroke-width:1.5;fill:none}
+
+  /* ---------- чипы ---------- */
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0 0}
+  .chip{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:8px 14px 8px 11px;border-radius:100px;cursor:pointer;
+    border:1px solid var(--line-2);background:transparent;color:var(--muted);
+    font:inherit;font-size:13.5px;font-weight:600;
+    transition:border-color .2s var(--ease),color .2s var(--ease),background .2s var(--ease);
+  }
+  .chip .dot{width:10px;height:10px;border-radius:3px;flex:none;opacity:.35;transition:opacity .2s}
+  .chip[aria-pressed="true"]{color:var(--ink);border-color:var(--line-2);background:rgba(255,255,255,.06)}
+  .chip[aria-pressed="true"] .dot{opacity:1}
+  .chip .n{color:var(--muted-2);font-weight:500;font-variant-numeric:tabular-nums}
+  .d-idle{background:#E4581A}
+  .d-over{background:#FFB169}
+  .d-door{background:#58AAF8}
+
+  /* ---------- карточка события ---------- */
+  .detail{
+    margin-top:14px;border:1px solid var(--line-2);border-radius:var(--radius);
+    background:var(--dark-3);padding:16px 17px;
+  }
+  .detail.empty{border-style:dashed;border-color:var(--line);color:var(--muted-2);text-align:center;padding:22px 17px}
+  .detail-head{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:4px}
+  .tag{
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;
+    padding:4px 9px;border-radius:100px;
+  }
+  .t-idle{background:rgba(228,88,26,.18);color:var(--flame-hi)}
+  .t-over{background:rgba(255,177,105,.16);color:var(--ember)}
+  .t-door{background:rgba(88,170,248,.16);color:var(--ice-hi)}
+  .detail h3{font-size:17px;margin:6px 0 8px}
+  .detail .calc{
+    margin-top:12px;padding:11px 13px;border-radius:10px;background:#000;
+    border:1px solid var(--line);color:var(--muted);
+    font-size:13px;line-height:1.7;font-variant-numeric:tabular-nums;
+  }
+  .detail .calc b{color:var(--ink);font-weight:620}
+  .zoomwrap{margin:12px 0 0;border:1px solid var(--line);border-radius:10px;background:#000;padding:8px}
+  .zoomline{stroke:var(--ink);stroke-width:1.6;fill:none}
+  .zoompass{stroke:var(--ember);stroke-width:1.2;stroke-dasharray:4 4;opacity:.75}
+  .zb-idle{fill:rgba(228,88,26,.24)}
+  .zb-over{fill:rgba(255,177,105,.20)}
+  .zb-door{fill:rgba(88,170,248,.28)}
+  .zoomaxis text{fill:#6f757d;font-size:9.5px}
+
+  /* ---------- итоги ---------- */
+  .totals{
+    margin-top:26px;display:grid;gap:12px;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  }
+  .tcard{
+    border:1px solid var(--line);border-radius:var(--radius);background:var(--dark-2);
+    padding:16px 17px;
+  }
+  .tcard .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:640}
+  .tcard .v{font-size:clamp(24px,3vw,32px);font-weight:680;letter-spacing:-.03em;margin-top:7px;font-variant-numeric:tabular-nums}
+  .tcard .u{font-size:13.5px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+  .tcard--hero{border-color:rgba(228,88,26,.45);background:linear-gradient(180deg,rgba(228,88,26,.14),rgba(228,88,26,.03))}
+  .tcard--hero .v{color:var(--ember)}
+
+  .bars{margin-top:16px;display:grid;gap:10px}
+  .bar{display:grid;grid-template-columns:1fr auto;gap:4px 14px;align-items:center}
+  .bar .lab{display:flex;align-items:center;gap:9px;font-size:14px}
+  .bar .num{font-size:14px;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+  .bar .track{grid-column:1/-1;height:7px;border-radius:100px;background:rgba(255,255,255,.07);overflow:hidden}
+  .bar .fill{height:100%;border-radius:100px;transition:width .45s var(--ease)}
+
+  /* ---------- секции ---------- */
+  .sec{padding:clamp(42px,6vw,72px) 0}
+  .sec h2{font-size:var(--fs-h2);margin-bottom:12px;max-width:24ch;text-wrap:balance}
+  .sec .sub{color:var(--muted);max-width:62ch}
+  .cards{margin-top:26px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+  .card{border:1px solid var(--line);border-radius:var(--radius);background:var(--dark-2);padding:18px 19px}
+  .card h3{font-size:16px;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:14.5px}
+  .card .addr{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:13px;color:var(--muted-2)}
+  .card .addr b{color:var(--ember);font-weight:620;font-variant-numeric:tabular-nums}
+  .badge{
+    display:inline-block;margin-top:10px;padding:4px 10px;border-radius:100px;
+    font-size:11.5px;font-weight:640;letter-spacing:.04em;
+    background:rgba(88,170,248,.14);color:var(--ice-hi);
+  }
+
+  .honest{border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--dark-2);padding:clamp(20px,3vw,28px)}
+  .honest h2{font-size:clamp(19px,2.2vw,25px);margin-bottom:14px}
+  .cols{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px}
+  .cols h3{font-size:13px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:10px}
+  .cols .no h3{color:var(--muted-2)}
+  .cols .yes h3{color:var(--ember)}
+  .cols li{position:relative;padding-left:20px;margin-bottom:9px;color:var(--muted);font-size:14.5px;line-height:1.55}
+  .cols li::before{position:absolute;left:0;top:0;font-weight:700}
+  .cols .no li::before{content:"–";color:var(--muted-2)}
+  .cols .yes li::before{content:"+";color:var(--ember)}
+
+  .cta{text-align:center;border-top:1px solid var(--line)}
+  .cta h2{margin:0 auto 14px;max-width:22ch}
+  .cta .sub{margin:0 auto}
+  .cta .btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:26px}
+  .foot{padding:26px 0 40px;border-top:1px solid var(--line);color:var(--muted-2);font-size:13.5px}
+  .foot a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line-2)}
+  .foot a:hover{color:var(--ink)}
+
+  @media (max-width:720px){
+    .scrollhint{display:block}
+    .panel{gap:14px 18px}
+    .fld input{width:96px}
+    .top .wrap{height:54px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition-duration:.01ms!important;animation-duration:.01ms!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="back" href="index.html">← К описанию услуги</a>
+    <a class="btn" href="mailto:kostenko@ftf.by?subject=Аудит%20энергоэффективности%20—%20разбор%20одной%20печи">Разберём вашу печь</a>
+  </div>
+</header>
+
+<main>
+
+<section class="intro">
+  <div class="wrap">
+    <span class="eyebrow">Демонстрация метода</span>
+    <h1>Двое суток из архива печи</h1>
+    <p class="lead">
+      Ровно то, что каждый день пишет ваш регистратор и никто не открывает. Ниже — двое суток
+      работы камерной печи: температура минута за минутой, паспортный режим и журнал садок.
+      Нажмите на подсвеченный участок — увидите, что там произошло и сколько это стоило.
+    </p>
+    <p class="disclaim">
+      <b>Данные демонстрационные.</b> Архив синтезирован по типовому режиму камерной печи —
+      это не архив вашего и не архив чужого завода, и никакой экономии он вам не обещает.
+      Настоящие здесь две вещи: алгоритм, который ищет отклонения, и формулы, которыми они
+      переводятся в деньги. Тариф и число рабочих суток подставьте свои — расчёт пересчитается.
+    </p>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <div class="panel">
+    <div class="fld">
+      <label id="lab-furnace">Печь</label>
+      <div class="seg" role="group" aria-labelledby="lab-furnace">
+        <button type="button" id="b-gas" aria-pressed="true">Газовая</button>
+        <button type="button" id="b-el" aria-pressed="false">Электрическая</button>
+      </div>
+    </div>
+    <div class="fld">
+      <label for="i-tariff">Тариф</label>
+      <input type="number" id="i-tariff" step="0.01" min="0" inputmode="decimal">
+      <span class="hint" id="h-tariff">BYN за м³</span>
+    </div>
+    <div class="fld">
+      <label for="i-days">Рабочих суток в году</label>
+      <input type="number" id="i-days" step="1" min="1" max="365" value="250" inputmode="numeric">
+      <span class="hint">для пересчёта на год</span>
+    </div>
+  </div>
+
+  <div class="chartbox">
+    <div class="chart-head">
+      <span class="name" id="f-name"></span>
+      <span class="meta" id="f-meta"></span>
+      <span class="legend">
+        <span><i class="lg-fact"></i>факт</span>
+        <span><i class="lg-pass"></i><span id="lg-pass"></span></span>
+        <span><i class="lg-charge"></i>садка в печи</span>
+      </span>
+    </div>
+    <div class="chart-scroll">
+      <svg id="chart" viewBox="0 0 1000 340" role="img" aria-labelledby="chart-t">
+        <title id="chart-t">График температуры демонстрационной печи за двое суток с подсветкой отклонений</title>
+      </svg>
+    </div>
+    <p class="scrollhint">График прокручивается вбок пальцем</p>
+  </div>
+
+  <div class="chips" role="group" aria-label="Что подсвечивать">
+    <button type="button" class="chip" data-k="idle" aria-pressed="true"><span class="dot d-idle"></span>Холостой ход <span class="n" id="n-idle"></span></button>
+    <button type="button" class="chip" data-k="over" aria-pressed="true"><span class="dot d-over"></span>Перетоп <span class="n" id="n-over"></span></button>
+    <button type="button" class="chip" data-k="door" aria-pressed="true"><span class="dot d-door"></span>Открытая дверь <span class="n" id="n-door"></span></button>
+  </div>
+
+  <div class="detail empty" id="detail">Нажмите на подсвеченный участок графика</div>
+
+  <div class="totals">
+    <div class="tcard">
+      <div class="k">За эти двое суток</div>
+      <div class="v" id="t-window"></div>
+      <div class="u" id="t-window-u"></div>
+    </div>
+    <div class="tcard tcard--hero">
+      <div class="k">В пересчёте на год</div>
+      <div class="v" id="t-year"></div>
+      <div class="u" id="t-year-u"></div>
+    </div>
+    <div class="tcard">
+      <div class="k">Печь горячая и пустая</div>
+      <div class="v" id="t-idle"></div>
+      <div class="u" id="t-idle-u"></div>
+    </div>
+  </div>
+
+  <div class="bars" id="bars"></div>
+
+  <p class="sm muted" style="margin-top:14px;max-width:66ch" id="noisenote"></p>
+
+</div>
+
+<section class="sec">
+  <div class="wrap">
+    <span class="eyebrow">Что с этим делать</span>
+    <h2>Мероприятия под то, что нашлось</h2>
+    <p class="sub">
+      Каждое привязано к своей статье. Сколько именно из статьи снимается — считается
+      по графику садок конкретного цеха, а не по проценту из справочника, поэтому
+      цифра «экономия» здесь не стоит. Стоит адресуемая сумма.
+    </p>
+    <div class="cards" id="measures"></div>
+    <p class="sm muted" style="margin-top:16px;max-width:66ch">
+      Первые два мероприятия работают с одной и той же статьёй с разных сторон —
+      складывать их суммы нельзя, это одни и те же деньги.
+    </p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="honest">
+      <span class="eyebrow">Без иллюзий</span>
+      <h2>Что здесь ненастоящее, а что настоящее</h2>
+      <div class="cols">
+        <div class="no">
+          <h3>Ненастоящее</h3>
+          <ul>
+            <li>Сам архив. Он синтезирован по типовому режиму камерной печи, а не выгружен с завода.</li>
+            <li>Тариф по умолчанию — ориентировочный. Ваш подставляется полем выше.</li>
+            <li>Теплотехнические коэффициенты демо-печи. У вашей они берутся из теплового расчёта.</li>
+            <li>Здесь одна печь и двое суток. В отчёте — весь участок и месяцы архива.</li>
+          </ul>
+        </div>
+        <div class="yes">
+          <h3>Настоящее</h3>
+          <ul>
+            <li>Алгоритм. Он не знает, где спрятаны отклонения, — он читает массив температур и журнал садок, как читал бы вашу выгрузку.</li>
+            <li>Формулы перевода в кубометры, киловатт-часы и рубли. Обычная теплотехника, они расписаны в каждой карточке.</li>
+            <li>Порог отсечки шума термопары. Отклонение меньше трёх сигм не считается отклонением.</li>
+            <li>Вывод, который тут виден: главные деньги — не в перетопе, а в часах, когда горячая печь стоит пустой.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec cta">
+  <div class="wrap">
+    <span class="eyebrow">Дальше</span>
+    <h2>То же самое, но по вашей печи</h2>
+    <p class="sub">
+      Нужна выгрузка с регистратора или АСУ, техкарта с паспортным режимом, счета за газ
+      и электричество и сменные журналы. Первый отчёт по одной печи — бесплатно, за пару дней,
+      без остановки производства и без комиссии в цеху.
+    </p>
+    <div class="btns">
+      <a class="btn" href="mailto:kostenko@ftf.by?subject=Аудит%20энергоэффективности%20—%20разбор%20одной%20печи">Разберём одну печь бесплатно →</a>
+      <a class="btn btn--ghost" href="index.html#how">Как это работает</a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    Максим Костенко — <a href="mailto:kostenko@ftf.by">kostenko@ftf.by</a>, <a href="tel:+375293557538">+375 29 355-75-38</a>
+  </div>
+</footer>
+
+</main>
+
+<script>
+"use strict";
+(function(){
+
+/* =====================================================================
+   1. ПАРАМЕТРЫ ДЕМОНСТРАЦИОННЫХ ПЕЧЕЙ
+   Коэффициенты подобраны под типовую камерную печь. У реальной печи они
+   берутся из её теплового расчёта — здесь они демонстрационные.
+   ===================================================================== */
+
+var FURNACES = {
+  gas: {
+    key:'gas',
+    name:'Камерная газовая печь, 300 кВт',
+    meta:'паспорт: 940 °C, выдержка 4 ч · садка до 2 т',
+    unit:'м³',
+    unitLong:'м³ газа',
+    tariff:1.05,
+    tariffHint:'BYN за м³',
+    passT:940,
+    /* расход на удержании пустой печи при паспортной температуре, ед/ч */
+    holdRate:12.0,
+    /* показатель степени зависимости потерь от температуры */
+    holdExp:1.35,
+    /* потери излучением через открытый проём, кВт (проём 1,2 м², ε 0,85) */
+    doorKw:125,
+    /* сколько кВт·ч тепла даёт единица топлива с учётом КПД печи */
+    kwhPerUnit:9.3,
+    burnerEff:0.50,
+    /* теплоёмкость садки для оценки догрева при перетопе */
+    chargeKg:2000,
+    chargeC:0.65
+  },
+  el: {
+    key:'el',
+    name:'Камерная электропечь, 160 кВт',
+    meta:'паспорт: 900 °C, выдержка 3 ч · садка до 1,5 т',
+    unit:'кВт·ч',
+    unitLong:'кВт·ч',
+    tariff:0.32,
+    tariffHint:'BYN за кВт·ч',
+    passT:900,
+    holdRate:36.0,
+    holdExp:1.40,
+    doorKw:82,
+    kwhPerUnit:1.0,
+    burnerEff:0.92,
+    chargeKg:1500,
+    chargeC:0.65
+  }
+};
+
+/* Планы работы. Это «что было в цеху», а не «что нашёл алгоритм»:
+   генератор по ним рисует кривую, детектор их не видит.
+   k: idle — печь стоит на уставке; door — дверь открыта (провал drop °C);
+      heat — выход на уставку to за постоянную времени tau;
+      soak — выдержка на уставке to.
+   У электропечи tau от садки к садке растёт — так выглядит деградация
+   нагревателей: печь выходит на режим всё дольше.                       */
+
+var PLANS = {
+  gas: [
+    {k:'idle',m:40},
+    {k:'door',m:6,drop:96,load:'in'},
+    {k:'heat',m:80,to:965,tau:26},
+    {k:'soak',m:240,to:965},
+    {k:'door',m:7,drop:44,load:'out'},
+    {k:'idle',m:218},
+    {k:'door',m:5,drop:92,load:'in'},
+    {k:'heat',m:78,to:963,tau:25},
+    {k:'soak',m:240,to:963},
+    {k:'door',m:6,drop:46,load:'out'},
+    {k:'idle',m:95},
+    {k:'door',m:5,drop:90,load:'in'},
+    {k:'heat',m:78,to:941,tau:26},
+    {k:'soak',m:240,to:941},
+    {k:'door',m:6,drop:43,load:'out'},
+    {k:'idle',m:40},
+    {k:'door',m:5,drop:94,load:'in'},
+    {k:'heat',m:82,to:968,tau:27},
+    {k:'soak',m:252,to:968},
+    {k:'door',m:8,drop:47,load:'out'},
+    {k:'idle',m:296},
+    {k:'door',m:5,drop:93,load:'in'},
+    {k:'heat',m:79,to:966,tau:26},
+    {k:'soak',m:240,to:966},
+    {k:'door',m:6,drop:45,load:'out'},
+    {k:'idle',m:120},
+    {k:'door',m:5,drop:91,load:'in'},
+    {k:'heat',m:80,to:964,tau:26},
+    {k:'soak',m:240,to:964},
+    {k:'door',m:6,drop:44,load:'out'},
+    {k:'idle',m:72}
+  ],
+  el: [
+    {k:'idle',m:60},
+    {k:'door',m:5,drop:78,load:'in'},
+    {k:'heat',m:95,to:918,tau:22},
+    {k:'soak',m:180,to:918},
+    {k:'door',m:6,drop:38,load:'out'},
+    {k:'idle',m:145},
+    {k:'door',m:5,drop:80,load:'in'},
+    {k:'heat',m:102,to:921,tau:25},
+    {k:'soak',m:180,to:921},
+    {k:'door',m:5,drop:36,load:'out'},
+    {k:'idle',m:330},
+    {k:'door',m:6,drop:82,load:'in'},
+    {k:'heat',m:110,to:899,tau:28},
+    {k:'soak',m:180,to:899},
+    {k:'door',m:5,drop:37,load:'out'},
+    {k:'idle',m:85},
+    {k:'door',m:5,drop:79,load:'in'},
+    {k:'heat',m:116,to:923,tau:31},
+    {k:'soak',m:186,to:923},
+    {k:'door',m:7,drop:39,load:'out'},
+    {k:'idle',m:240},
+    {k:'door',m:5,drop:81,load:'in'},
+    {k:'heat',m:124,to:920,tau:34},
+    {k:'soak',m:180,to:920},
+    {k:'door',m:6,drop:38,load:'out'},
+    {k:'idle',m:160},
+    {k:'door',m:5,drop:80,load:'in'},
+    {k:'heat',m:137,to:917,tau:38},
+    {k:'soak',m:174,to:917},
+    {k:'door',m:6,drop:37,load:'out'},
+    {k:'idle',m:30}
+  ]
+};
+
+var WINDOW_MIN = 2880;            /* двое суток по минуте */
+var NOISE_SD   = 1.35;            /* шум термопары, °C */
+
+/* =====================================================================
+   2. ГЕНЕРАТОР АРХИВА
+   ===================================================================== */
+
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+/* сумма двух равномерных — грубое приближение нормального шума */
+function noise(rnd){ return (rnd() + rnd() - 1) * NOISE_SD * 1.7; }
+
+function buildArchive(fk){
+  var plan = PLANS[fk], f = FURNACES[fk];
+  var rnd = mulberry32(fk === 'gas' ? 20250403 : 71130921);
+  var T = new Float64Array(WINDOW_MIN);
+  var charges = [];                       /* журнал садок: что даёт цех */
+  var cur = f.passT + 25, sp = f.passT + 25, i = 0, openAt = null;
+
+  for (var s = 0; s < plan.length && i < WINDOW_MIN; s++){
+    var seg = plan[s];
+
+    if (seg.k === 'door' && seg.load === 'in')  openAt = i;
+    if (seg.k === 'door' && seg.load === 'out' && openAt !== null){
+      charges.push({from:openAt, to:Math.min(i + seg.m, WINDOW_MIN)});
+      openAt = null;
+    }
+    if (seg.to) sp = seg.to;
+
+    for (var m = 0; m < seg.m && i < WINDOW_MIN; m++, i++){
+      if (seg.k === 'door'){
+        cur -= seg.drop / seg.m;
+      } else {
+        var tau = seg.tau || 17;                   /* пустая печь выходит на режим быстрее садки */
+        cur = sp + (cur - sp) * Math.exp(-1 / tau);
+      }
+      /* колебание регулятора — реальный процесс, не шум: период ~11 мин */
+      var reg = (cur > sp - 12) ? Math.sin(i / 11 * 2 * Math.PI) * 2.1 : 0;
+      T[i] = cur + reg + noise(rnd);
+    }
+  }
+  /* если план короче окна — дотягиваем последним состоянием */
+  for (; i < WINDOW_MIN; i++){
+    cur = sp + (cur - sp) * Math.exp(-1 / 17);
+    T[i] = cur + Math.sin(i / 11 * 2 * Math.PI) * 2.1 + noise(rnd);
+  }
+  if (openAt !== null) charges.push({from:openAt, to:WINDOW_MIN});
+  return {T:T, charges:charges};
+}
+
+/* =====================================================================
+   3. ДЕТЕКТОР
+   Знает только: массив температур, журнал садок, паспортный режим.
+   Плана из раздела 2 он не видит — как не увидит и на реальной выгрузке.
+   ===================================================================== */
+
+function smooth(T, w){
+  var n = T.length, out = new Float64Array(n), h = (w - 1) / 2;
+  for (var i = 0; i < n; i++){
+    var a = Math.max(0, i - h), b = Math.min(n - 1, i + h), s = 0;
+    for (var j = a; j <= b; j++) s += T[j];
+    out[i] = s / (b - a + 1);
+  }
+  return out;
+}
+
+/* оценка шума термопары: сигма первых разностей / √2 */
+function noiseSigma(T, charges){
+  var d = [], i;
+  for (var c = 0; c < charges.length; c++){
+    var from = charges[c].from + 150, to = charges[c].to - 30;   /* заведомо внутри выдержки */
+    for (i = from + 1; i < to && i < T.length; i++) d.push(T[i] - T[i-1]);
+  }
+  if (!d.length) return 0;
+  var mean = 0; for (i = 0; i < d.length; i++) mean += d[i]; mean /= d.length;
+  var v = 0; for (i = 0; i < d.length; i++) v += (d[i]-mean)*(d[i]-mean);
+  return Math.sqrt(v / d.length / 2);
+}
+
+function detect(arc, f){
+  var T = arc.T, n = T.length, charges = arc.charges;
+  var s3 = smooth(T, 3), s5 = smooth(T, 5), s9 = smooth(T, 9);
+  var sigma = noiseSigma(T, charges);
+  var overThresh = Math.max(3 * sigma, 4);      /* меньше трёх сигм — не отклонение */
+  var ev = [], i, c;
+
+  /* --- открытая дверь: падение ≥ 4,5 °C/мин, длина = до дна провала --- */
+  var DROP = 4.5;
+  i = 1;
+  while (i < n){
+    if (s3[i] - s3[i-1] <= -DROP){
+      var st = i - 1;
+      while (i < n && s3[i] - s3[i-1] < -0.8) i++;
+      var end = i - 1;
+      /* Сглаживание сдвигает начало провала на минуту-полторы назад, и дверь
+         выходит «открытой» дольше, чем была. Начало уточняем по сырому ряду. */
+      while (st < end && T[st + 1] - T[st] > -DROP) st++;
+      var top = s3[st > 0 ? st - 1 : 0], bot = s3[end], mins = end - st;
+      if (mins >= 2 && top - bot >= 20){
+        ev.push({type:'door', from:st, to:end, mins:mins, drop:top - bot, top:top});
+      }
+    } else i++;
+  }
+
+  /* --- холостой ход: печь выше 600 °C вне садки, дольше 20 мин --- */
+  function inCharge(k){
+    for (var q = 0; q < charges.length; q++) if (k >= charges[q].from && k < charges[q].to) return true;
+    return false;
+  }
+  var st2 = null;
+  for (i = 0; i <= n; i++){
+    var hot = i < n && s5[i] > 600 && !inCharge(i);
+    if (hot){ if (st2 === null) st2 = i; }
+    else if (st2 !== null){
+      if (i - st2 >= 20){
+        var sum = 0, mx = -1e9;
+        for (var q2 = st2; q2 < i; q2++){ sum += T[q2]; if (T[q2] > mx) mx = T[q2]; }
+        ev.push({type:'idle', from:st2, to:i, mins:i - st2, avgT:sum / (i - st2), maxT:mx});
+      }
+      st2 = null;
+    }
+  }
+
+  /* --- перетоп: средняя температура выдержки выше паспортной --- */
+  /* --- и наблюдение: тренд времени выхода на режим по садкам      --- */
+  var heats = [];
+  for (c = 0; c < charges.length; c++){
+    var sk = findSoak(s9, charges[c].from, Math.min(charges[c].to, n));
+    if (!sk) continue;
+    heats.push(sk[0] - charges[c].from);
+    var ssum = 0;
+    for (i = sk[0]; i < sk[1]; i++) ssum += T[i];
+    var avg = ssum / (sk[1] - sk[0]);
+    var over = avg - f.passT;
+    if (over > overThresh){
+      ev.push({type:'over', from:sk[0], to:sk[1], mins:sk[1] - sk[0], avgT:avg, over:over});
+    }
+  }
+
+  ev.sort(function(a,b){ return a.from - b.from; });
+  return {events:ev, sigma:sigma, overThresh:overThresh, heats:heats};
+}
+
+/* Выдержка = самый длинный участок, где температура держится в полосе 4 °C
+   от максимума садки. По производной искать нельзя: минутный шум термопары
+   рвёт любой порог наклона, а полоса к нему устойчива. */
+function findSoak(S, from, to){
+  var i, mx = -1e9;
+  for (i = from; i < to; i++) if (S[i] > mx) mx = S[i];
+  var band = mx - 4, best = null, st = null;
+  for (i = from; i < to; i++){
+    if (S[i] >= band){ if (st === null) st = i; }
+    else if (st !== null){
+      if (!best || (i - st) > (best[1] - best[0])) best = [st, i];
+      st = null;
+    }
+  }
+  if (st !== null && (!best || (to - st) > (best[1] - best[0]))) best = [st, to];
+  if (best && best[1] - best[0] < 45) return null;
+  return best;
+}
+
+/* =====================================================================
+   4. ДЕНЬГИ
+   ===================================================================== */
+
+/* расход на удержание пустой печи при температуре t, единиц в час */
+function holdRate(f, t){
+  return f.holdRate * Math.pow((t - 20) / (f.passT - 20), f.holdExp);
+}
+/* потери излучением через открытый проём, единиц за минуту */
+function doorRate(f, t){
+  var kw = f.doorKw * Math.pow((t + 273) / (f.passT + 273), 4);
+  return kw / 60 / f.kwhPerUnit / f.burnerEff;
+}
+
+function cost(e, f){
+  var h = e.mins / 60, u;
+  if (e.type === 'idle'){
+    u = holdRate(f, e.avgT) * h;
+  } else if (e.type === 'door'){
+    u = doorRate(f, e.top) * e.mins;
+  } else {
+    /* перетоп: разница удержания + догрев садки на лишние градусы */
+    var dHold  = (holdRate(f, e.avgT) - holdRate(f, f.passT)) * h;
+    var dCharge = f.chargeKg * f.chargeC * e.over / 3600 / f.kwhPerUnit / f.burnerEff;
+    u = dHold + dCharge;
+  }
+  return u;
+}
+
+/* =====================================================================
+   5. ОТРИСОВКА
+   ===================================================================== */
+
+var W = 1000, H = 340, PL = 46, PR = 12, PT = 14, PB = 46, CH = 16;
+var plotW = W - PL - PR, plotH = H - PT - PB - CH - 8;
+
+var TYPE = {
+  idle:{cls:'z-idle', tag:'t-idle', name:'Холостой ход'},
+  over:{cls:'z-over', tag:'t-over', name:'Перетоп'},
+  door:{cls:'z-door', tag:'t-door', name:'Открытая дверь'}
+};
+
+var state = { fk:'gas', arc:null, det:null, on:{idle:true, over:true, door:true}, sel:null, yLo:0, yHi:0 };
+
+var $ = function(id){ return document.getElementById(id); };
+var SVGNS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs){
+  var n = document.createElementNS(SVGNS, tag);
+  for (var k in attrs) if (attrs[k] !== undefined && attrs[k] !== null) n.setAttribute(k, attrs[k]);
+  return n;
+}
+function nf(x, d){
+  return x.toLocaleString('ru-RU', {minimumFractionDigits:d||0, maximumFractionDigits:d||0});
+}
+function hm(mins){
+  var h = Math.floor(mins / 60), m = Math.round(mins % 60);
+  return h ? (h + ' ч ' + (m < 10 ? '0' : '') + m + ' мин') : (m + ' мин');
+}
+function clock(i){
+  var d = Math.floor(i / 1440) + 1, h = Math.floor((i % 1440) / 60), m = i % 60;
+  return 'сут. ' + d + ', ' + (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+}
+
+function x(i){ return PL + i / (WINDOW_MIN - 1) * plotW; }
+function y(t){ return PT + (state.yHi - t) / (state.yHi - state.yLo) * plotH; }
+
+function render(){
+  var f = FURNACES[state.fk], arc = state.arc, det = state.det;
+  var svg = $('chart');
+  while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
+
+  /* шкала */
+  var lo = 1e9, hi = -1e9, i;
+  for (i = 0; i < WINDOW_MIN; i++){ if (arc.T[i] < lo) lo = arc.T[i]; if (arc.T[i] > hi) hi = arc.T[i]; }
+  state.yLo = Math.floor((Math.min(lo, f.passT) - 14) / 10) * 10;
+  state.yHi = Math.ceil((Math.max(hi, f.passT) + 10) / 10) * 10;
+
+  var g;
+
+  /* сетка и ось Y */
+  g = el('g', {'class':'grid'});
+  var step = 20, t0 = Math.ceil(state.yLo / step) * step;
+  var ax = el('g', {'class':'axis'});
+  for (var t = t0; t <= state.yHi; t += step){
+    g.appendChild(el('line', {x1:PL, x2:W-PR, y1:y(t).toFixed(1), y2:y(t).toFixed(1)}));
+    var lb = el('text', {x:PL-8, y:(y(t)+4).toFixed(1), 'text-anchor':'end'});
+    lb.textContent = t;
+    ax.appendChild(lb);
+  }
+  svg.appendChild(g);
+
+  /* ось X — часы */
+  for (var hh = 0; hh <= 48; hh += 4){
+    var xi = x(Math.min(hh * 60, WINDOW_MIN - 1));
+    var tx = el('text', {x:xi.toFixed(1), y:H-PB+CH+26, 'text-anchor':hh===0?'start':(hh===48?'end':'middle')});
+    tx.textContent = hh + ' ч';
+    ax.appendChild(tx);
+  }
+  var yl = el('text', {x:PL-8, y:PT-2, 'text-anchor':'end'});
+  yl.textContent = '°C';
+  ax.appendChild(yl);
+  svg.appendChild(ax);
+
+  /* Зоны событий. Формы намеренно разные, иначе заливки сливаются в кашу:
+     холостой ход — полоса во всю высоту, перетоп — площадь между паспортной
+     полкой и фактом (сразу видно, на сколько градусов выше), дверь — штрих. */
+  var byType = {idle:[], over:[], door:[]};
+  det.events.forEach(function(e){ byType[e.type].push(e); });
+
+  function zoneGroup(k){ return el('g', {'class':'zone ' + TYPE[k].cls + (state.on[k] ? ' on' : '')}); }
+
+  var zi = zoneGroup('idle');
+  byType.idle.forEach(function(e){
+    var x0 = x(e.from), x1 = x(Math.min(e.to, WINDOW_MIN - 1));
+    zi.appendChild(el('rect', {x:x0.toFixed(1), y:PT, width:Math.max(x1-x0, 1.4).toFixed(1), height:plotH}));
+  });
+  svg.appendChild(zi);
+
+  var zo = zoneGroup('over'), yp = y(f.passT);
+  byType.over.forEach(function(e){
+    var b = Math.min(e.to, WINDOW_MIN - 1), p = 'M' + x(e.from).toFixed(1) + ' ' + yp.toFixed(1);
+    for (var q = e.from; q <= b; q++) p += 'L' + x(q).toFixed(1) + ' ' + Math.min(y(arc.T[q]), yp).toFixed(1);
+    p += 'L' + x(b).toFixed(1) + ' ' + yp.toFixed(1) + 'Z';
+    zo.appendChild(el('path', {d:p}));
+  });
+  svg.appendChild(zo);
+
+  /* паспортная полка */
+  svg.appendChild(el('line', {'class':'passline', x1:PL, x2:W-PR, y1:yp.toFixed(1), y2:yp.toFixed(1)}));
+
+  var zd = zoneGroup('door');
+  byType.door.forEach(function(e){
+    var x0 = x(e.from), x1 = x(Math.min(e.to, WINDOW_MIN - 1));
+    zd.appendChild(el('rect', {x:x0.toFixed(1), y:PT, width:Math.max(x1-x0, 1.6).toFixed(1), height:plotH}));
+  });
+  svg.appendChild(zd);
+
+  /* фактическая кривая */
+  var d = '', px = -9;
+  for (i = 0; i < WINDOW_MIN; i++){
+    var xi2 = x(i);
+    if (xi2 - px < 0.33 && i !== WINDOW_MIN - 1) continue;    /* не рисуем плотнее пикселя */
+    px = xi2;
+    d += (d ? 'L' : 'M') + xi2.toFixed(1) + ' ' + y(arc.T[i]).toFixed(1);
+  }
+  svg.appendChild(el('path', {'class':'factline', d:d}));
+
+  /* полоса садок */
+  var cy = PT + plotH + 10;
+  var cg = el('g', {'class':'charge'});
+  cg.appendChild(el('rect', {x:PL, y:cy, width:plotW, height:CH, fill:'rgba(255,255,255,.045)'}));
+  arc.charges.forEach(function(c, n){
+    var x0 = x(c.from), x1 = x(Math.min(c.to, WINDOW_MIN - 1));
+    cg.appendChild(el('rect', {x:x0.toFixed(1), y:cy, width:(x1-x0).toFixed(1), height:CH}));
+    if (x1 - x0 > 26){
+      var lb2 = el('text', {'class':'lbl', x:((x0+x1)/2).toFixed(1), y:cy+11.5, 'text-anchor':'middle', fill:'#0a0b0d'});
+      lb2.textContent = 'садка ' + (n+1);
+      cg.appendChild(lb2);
+    }
+  });
+  var cl = el('text', {'class':'lbl', x:PL-8, y:cy+11.5, 'text-anchor':'end'});
+  cl.textContent = 'садки';
+  cg.appendChild(cl);
+  svg.appendChild(cg);
+
+  /* выделение выбранного события */
+  if (state.sel){
+    var e0 = state.sel, sx0 = x(e0.from), sx1 = x(Math.min(e0.to, WINDOW_MIN - 1));
+    svg.appendChild(el('rect', {'class':'sel', x:(sx0-1).toFixed(1), y:PT-2,
+      width:Math.max(sx1-sx0+2, 4).toFixed(1), height:plotH+4, rx:3}));
+  }
+
+  /* Зоны нажатия — поверх всего, шириной не меньше пальца.
+     Узкие кладём последними, иначе широкая соседняя зона накроет их край. */
+  var hg = el('g', null);
+  var order = det.events.map(function(e, n){ return {e:e, n:n}; })
+    .sort(function(a, b){ return (b.e.to - b.e.from) - (a.e.to - a.e.from); });
+  order.forEach(function(o){
+    var e = o.e, n = o.n;
+    if (!state.on[e.type]) return;
+    var x0 = x(e.from), x1 = x(Math.min(e.to, WINDOW_MIN - 1)), w = Math.max(x1 - x0, 9);
+    var r = el('rect', {'class':'hit', x:(x0 - (w - (x1-x0))/2).toFixed(1), y:PT,
+      width:w.toFixed(1), height:plotH + CH + 10, tabindex:0, role:'button'});
+    r.setAttribute('aria-label', TYPE[e.type].name + ', ' + clock(e.from) + ', ' + hm(e.mins));
+    r.addEventListener('click', function(){ select(n); });
+    r.addEventListener('keydown', function(ev2){
+      if (ev2.key === 'Enter' || ev2.key === ' '){ ev2.preventDefault(); select(n); }
+    });
+    hg.appendChild(r);
+  });
+  svg.appendChild(hg);
+}
+
+/* --- приближённый фрагмент в карточке события --- */
+function zoom(e){
+  var f = FURNACES[state.fk], T = state.arc.T;
+  var pad = Math.max(25, Math.round(e.mins * 0.28));
+  var a = Math.max(0, e.from - pad), b = Math.min(WINDOW_MIN, e.to + pad);
+  var ZW = 640, ZH = 130, zl = 34, zr = 8, zt = 10, zb = 20;
+  var pw = ZW - zl - zr, ph = ZH - zt - zb;
+  var lo = 1e9, hi = -1e9, i;
+  for (i = a; i < b; i++){ if (T[i] < lo) lo = T[i]; if (T[i] > hi) hi = T[i]; }
+  lo = Math.min(lo, f.passT) - 6; hi = Math.max(hi, f.passT) + 6;
+  var zx = function(i){ return zl + (i - a) / (b - a - 1) * pw; };
+  var zy = function(t){ return zt + (hi - t) / (hi - lo) * ph; };
+
+  var svg = el('svg', {viewBox:'0 0 ' + ZW + ' ' + ZH, width:'100%', 'aria-hidden':'true'});
+  svg.appendChild(el('rect', {'class':'zb-' + e.type, x:zx(e.from).toFixed(1), y:zt,
+    width:Math.max(zx(Math.min(e.to, b-1)) - zx(e.from), 2).toFixed(1), height:ph}));
+  svg.appendChild(el('line', {'class':'zoompass', x1:zl, x2:ZW-zr, y1:zy(f.passT).toFixed(1), y2:zy(f.passT).toFixed(1)}));
+  var d = '';
+  for (i = a; i < b; i++) d += (d ? 'L' : 'M') + zx(i).toFixed(1) + ' ' + zy(T[i]).toFixed(1);
+  svg.appendChild(el('path', {'class':'zoomline', d:d}));
+
+  var ax = el('g', {'class':'zoomaxis'});
+  [hi - 3, lo + 3].forEach(function(t){
+    var lb = el('text', {x:zl-6, y:(zy(t)+3).toFixed(1), 'text-anchor':'end'});
+    lb.textContent = Math.round(t);
+    ax.appendChild(lb);
+  });
+  [[a, 'start'], [b-1, 'end']].forEach(function(p){
+    var lb = el('text', {x:zx(p[0]).toFixed(1), y:ZH-6, 'text-anchor':p[1]});
+    lb.textContent = clock(p[0]).replace('сут. ', 'с');
+    ax.appendChild(lb);
+  });
+  svg.appendChild(ax);
+  return svg;
+}
+
+/* =====================================================================
+   6. КАРТОЧКА СОБЫТИЯ
+   ===================================================================== */
+
+function select(n){
+  state.sel = state.det.events[n];
+  render();
+  paintDetail();
+  var box = $('detail');
+  if (box.getBoundingClientRect().bottom > window.innerHeight) box.scrollIntoView({block:'center'});
+}
+
+function paintDetail(){
+  var box = $('detail'), e = state.sel, f = FURNACES[state.fk];
+  box.className = 'detail';
+  box.textContent = '';
+  if (!e){ box.className = 'detail empty'; box.textContent = 'Нажмите на подсвеченный участок графика'; return; }
+
+  var u = cost(e, f), money = u * tariff();
+  var head = document.createElement('div');
+  head.className = 'detail-head';
+  head.innerHTML = '<span class="tag ' + TYPE[e.type].tag + '">' + TYPE[e.type].name + '</span>' +
+                   '<span class="sm muted">' + clock(e.from) + ' — ' + clock(Math.min(e.to, WINDOW_MIN-1)) + ' · ' + hm(e.mins) + '</span>';
+  box.appendChild(head);
+
+  var h3 = document.createElement('h3'), p = document.createElement('p'), calc = document.createElement('div');
+  p.className = 'muted'; p.style.fontSize = '14.5px';
+  calc.className = 'calc';
+
+  if (e.type === 'idle'){
+    h3.textContent = 'Печь ' + hm(e.mins) + ' держали горячей и пустой';
+    p.textContent = 'В журнале садок на этом промежутке пусто, а температура всё время держится около '
+      + Math.round(e.avgT) + ' °C. Уставку после выгрузки никто не снял — горелки продолжают компенсировать потери через кладку и с уходящими газами.';
+    calc.innerHTML =
+      'расход на удержании при ' + Math.round(e.avgT) + ' °C&nbsp;— <b>' + nf(holdRate(f, e.avgT),1) + ' ' + f.unit + '/ч</b><br>' +
+      '× ' + hm(e.mins) + ' = <b>' + nf(u,1) + ' ' + f.unitLong + '</b><br>' +
+      '× ' + nf(tariff(),2) + ' BYN = <b>' + nf(money,2) + ' BYN</b>';
+  } else if (e.type === 'over'){
+    h3.textContent = 'Выдержка шла на ' + nf(e.over,1) + ' °C выше паспорта';
+    p.textContent = 'Средняя температура выдержки ' + nf(e.avgT,1) + ' °C при паспортных ' + f.passT + ' °C. '
+      + 'Порог отсечки — ' + nf(state.det.overThresh,1) + ' °C, это три сигмы шума термопары, так что дрожание датчика сюда не попало. '
+      + 'Денег тут заметно меньше, чем в холостом ходе, — но именно расползшийся режим даёт разброс твёрдости и переделку.';
+    calc.innerHTML =
+      'удержание: (' + nf(holdRate(f,e.avgT),2) + ' − ' + nf(holdRate(f,f.passT),2) + ') ' + f.unit + '/ч × ' + hm(e.mins) + '<br>' +
+      'догрев садки: ' + nf(f.chargeKg,0) + ' кг × ' + nf(f.chargeC,2) + ' кДж/(кг·К) × ' + nf(e.over,1) + ' К<br>' +
+      'итого <b>' + nf(u,1) + ' ' + f.unitLong + '</b> = <b>' + nf(money,2) + ' BYN</b>';
+  } else {
+    h3.textContent = 'Дверь была открыта около ' + hm(e.mins);
+    p.textContent = 'Провал на ' + Math.round(e.drop) + ' °C за ' + hm(e.mins)
+      + '. Так падает температура только при открытом проёме: через него печь светит наружу, и это самые быстрые потери из трёх.';
+    calc.innerHTML =
+      'излучение через проём при ' + Math.round(e.top) + ' °C&nbsp;— <b>' + nf(f.doorKw * Math.pow((e.top+273)/(f.passT+273),4), 0) + ' кВт</b><br>' +
+      '× ' + hm(e.mins) + ' = <b>' + nf(u,1) + ' ' + f.unitLong + '</b><br>' +
+      '× ' + nf(tariff(),2) + ' BYN = <b>' + nf(money,2) + ' BYN</b>';
+  }
+
+  box.appendChild(h3);
+  box.appendChild(p);
+  var zw = document.createElement('div');
+  zw.className = 'zoomwrap';
+  zw.appendChild(zoom(e));
+  box.appendChild(zw);
+  box.appendChild(calc);
+}
+
+/* =====================================================================
+   7. ИТОГИ, ПОЛОСЫ, МЕРОПРИЯТИЯ
+   ===================================================================== */
+
+function tariff(){
+  var v = parseFloat($('i-tariff').value.replace(',', '.'));
+  return isFinite(v) && v > 0 ? v : FURNACES[state.fk].tariff;
+}
+function days(){
+  var v = parseInt($('i-days').value, 10);
+  return isFinite(v) && v > 0 ? Math.min(v, 365) : 250;
+}
+
+function sums(){
+  var f = FURNACES[state.fk], out = {idle:{u:0,n:0,min:0}, over:{u:0,n:0,min:0}, door:{u:0,n:0,min:0}};
+  state.det.events.forEach(function(e){
+    var s = out[e.type];
+    s.u += cost(e, f); s.n++; s.min += e.mins;
+  });
+  return out;
+}
+
+function paintTotals(){
+  var f = FURNACES[state.fk], s = sums(), tr = tariff(), k = days() / 2;
+  var uOn = 0, uAll = 0;
+  ['idle','over','door'].forEach(function(t){
+    uAll += s[t].u;
+    if (state.on[t]) uOn += s[t].u;
+  });
+
+  $('t-window').textContent = nf(uOn, 0) + ' ' + f.unit;
+  $('t-window-u').textContent = nf(uOn * tr, 0) + ' BYN за 48 часов';
+  $('t-year').textContent = nf(uOn * tr * k, 0) + ' BYN';
+  $('t-year-u').textContent = nf(uOn * k, 0) + ' ' + f.unit + ' · при ' + days() + ' рабочих сутках';
+  $('t-idle').textContent = hm(s.idle.min);
+  $('t-idle-u').textContent = 'из 48 часов — это ' + Math.round(s.idle.min / WINDOW_MIN * 100) + ' % времени';
+
+  $('n-idle').textContent = s.idle.n;
+  $('n-over').textContent = s.over.n;
+  $('n-door').textContent = s.door.n;
+
+  var mx = Math.max(s.idle.u, s.over.u, s.door.u, 1e-6);
+  var bars = $('bars');
+  bars.textContent = '';
+  [['idle','Холостой ход','#E4581A'], ['over','Перетоп','#FFB169'], ['door','Открытая дверь','#58AAF8']].forEach(function(r){
+    var t = r[0], u = s[t].u, row = document.createElement('div');
+    row.className = 'bar';
+    row.innerHTML =
+      '<div class="lab"><span class="dot d-' + t + '" style="width:10px;height:10px;border-radius:3px;display:inline-block"></span>' + r[1] +
+      ' <span class="sm" style="color:var(--muted-2)">· ' + s[t].n + ' шт · ' + hm(s[t].min) + '</span></div>' +
+      '<div class="num">' + nf(u, 0) + ' ' + f.unit + ' · ' + nf(u * tr * k, 0) + ' BYN/год</div>' +
+      '<div class="track"><span class="fill" style="width:' + (u / mx * 100).toFixed(1) + '%;background:' + r[2] + ';display:block"></span></div>';
+    bars.appendChild(row);
+  });
+
+  var hts = state.det.heats, note = '';
+  if (hts.length >= 3 && hts[hts.length-1] - hts[0] > 12){
+    note = 'Отдельным наблюдением, без цены: время выхода на режим по садкам выросло с '
+      + hts[0] + ' до ' + hts[hts.length-1] + ' минут. Это не перерасход, это повод посмотреть нагреватели, '
+      + 'уплотнения и состояние футеровки, пока они не встали посреди садки. ';
+  }
+  $('noisenote').textContent = note + 'Шум термопары на выдержке — ±' + nf(state.det.sigma, 2)
+    + ' °C. Порог, ниже которого отклонение не считается отклонением, — ' + nf(state.det.overThresh, 1)
+    + ' °C (три сигмы). Отсюда видно, почему по средним за смену эти деньги не находятся: '
+    + 'средняя прячет и трёхчасовые паузы, и провалы на открытой двери.';
+}
+
+var MEASURES = [
+  {
+    t:'Снимать уставку в паузе между садками',
+    d:'Регулятор переводится на дежурный уровень или отключается, если пауза дольше часа. Настройка контура и регламент для мастера — оборудование не покупается.',
+    k:'idle', free:true
+  },
+  {
+    t:'Планировать садки плотнее',
+    d:'Часть пауз — не технология, а диспетчеризация: заготовка не подана, кран занят, смена кончилась. Это видно по журналу и лечится графиком, а не железом.',
+    k:'idle', free:true
+  },
+  {
+    t:'Вернуть уставку к паспортной и поверить термопары',
+    d:'Перетоп держат не со зла: датчик врёт, и его компенсируют «с запасом». Денег здесь меньше, чем кажется, — главный эффект в стабильности структуры и в переделке, которой не будет.',
+    k:'over', free:true
+  },
+  {
+    t:'Сократить время открытого проёма',
+    d:'Механизация загрузки, порядок с тарой, уплотнение и — где оправдано — воздушная завеса. Первая половина организационная, вторая требует закупки.',
+    k:'door', free:false
+  }
+];
+
+function paintMeasures(){
+  var f = FURNACES[state.fk], s = sums(), tr = tariff(), k = days() / 2;
+  var box = $('measures');
+  box.textContent = '';
+  MEASURES.forEach(function(m){
+    var c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = '<h3>' + m.t + '</h3><p>' + m.d + '</p>' +
+      (m.free ? '<span class="badge">без закупки оборудования</span>' : '') +
+      '<div class="addr">адресует статью «' + TYPE[m.k].name.toLowerCase() + '» — <b>' +
+      nf(s[m.k].u * tr * k, 0) + ' BYN/год</b></div>';
+    box.appendChild(c);
+  });
+}
+
+/* =====================================================================
+   8. ЗАПУСК
+   ===================================================================== */
+
+function load(fk){
+  state.fk = fk;
+  state.arc = buildArchive(fk);
+  state.det = detect(state.arc, FURNACES[fk]);
+  state.sel = null;
+  $('i-tariff').value = FURNACES[fk].tariff;
+  $('h-tariff').textContent = FURNACES[fk].tariffHint;
+  $('f-name').textContent = FURNACES[fk].name;
+  $('f-meta').textContent = FURNACES[fk].meta;
+  $('lg-pass').textContent = 'паспорт ' + FURNACES[fk].passT + ' °C';
+  $('b-gas').setAttribute('aria-pressed', fk === 'gas');
+  $('b-el').setAttribute('aria-pressed', fk === 'el');
+  redraw();
+}
+function redraw(){
+  render();
+  paintDetail();
+  paintTotals();
+  paintMeasures();
+}
+
+$('b-gas').addEventListener('click', function(){ if (state.fk !== 'gas') load('gas'); });
+$('b-el').addEventListener('click',  function(){ if (state.fk !== 'el')  load('el');  });
+$('i-tariff').addEventListener('input', function(){ paintTotals(); paintMeasures(); paintDetail(); });
+$('i-days').addEventListener('input',   function(){ paintTotals(); paintMeasures(); });
+
+Array.prototype.forEach.call(document.querySelectorAll('.chip'), function(ch){
+  ch.addEventListener('click', function(){
+    var k = ch.dataset.k;
+    state.on[k] = !state.on[k];
+    ch.setAttribute('aria-pressed', state.on[k]);
+    if (state.sel && state.sel.type === k && !state.on[k]) state.sel = null;
+    redraw();
+  });
+});
+
+load('gas');
+
+})();
+</script>
+</body>
+</html>
